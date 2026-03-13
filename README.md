@@ -1,8 +1,8 @@
 # isotc-cli
 
-**Intent-to-Spec Optimal Transport Compiler CLI** — AI駆動開発における意図保護と生成的負債防止
+**Intent-to-Spec Optimal Transport Compiler CLI** — 仕様・テスト・アーキテクチャ境界を先に固定し、品質保証とトレーサビリティで閉じる開発様式を支援
 
-AIエージェントによる「Vibe-coding」が引き起こすアーキテクチャ破壊を防ぎ、憲法（Constitution）に基づいた検証と自己修復を実現するCLIツールです。
+AI駆動開発の本質的な転換点は、コード生成能力そのものではなく、仕様・テスト・アーキテクチャ境界を先に固定し、それを品質保証とトレーサビリティで閉じる開発様式への移行である。isotc-cli は、AIエージェントによる ad-hoc prompt-based development（Vibe-coding とも呼ばれる、仕様に基づかないコード生成）が引き起こすアーキテクチャ破壊を防ぎ、憲法（Constitution）に基づいた検証と自己修復を実現するCLIツールです。
 
 ## インストール
 
@@ -72,7 +72,7 @@ isotc impl --task-id 1.2 --isolated-prompt > prompt_1.2.txt
 
 ## 憲法（Constitution）
 
-`.spec/constitution.toml` でレイヤー、依存ルール、Agent Steering を定義します。
+`.spec/constitution.toml` でレイヤー、依存ルール、Agent Steering を定義します。AI が扱えるコンテキスト境界を保つ設計が有利だという仮説に基づき、モジュール境界を明示的に検証可能にします。
 
 ```toml
 [[layers]]
@@ -95,6 +95,7 @@ designPrinciples = "ヘキサゴナルアーキテクチャを厳守"
 - [PRD](docs/1_PRD.md) - プロダクト要求仕様書
 - [要求仕様書](docs/2_REQUIREMENTS.md) - コマンド契約・I/O仕様
 - [アーキテクチャ設計](docs/3_ARCHITECTURE.md) - 内部構成
+- [研究背景](docs/4_RESEARCH_BACKGROUND.md) - 学術的裏付けと参考文献
 
 ## 開発
 

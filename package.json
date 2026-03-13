@@ -1,7 +1,7 @@
 {
   "name": "isotc-cli",
   "version": "0.1.0",
-  "description": "Intent-to-Spec Optimal Transport Compiler CLI - AI駆動開発における意図保護と生成的負債防止",
+  "description": "Intent-to-Spec Optimal Transport Compiler CLI - 仕様・アーキテクチャ境界の検証とトレーサビリティ支援",
   "main": "dist/index.js",
   "bin": {
     "isotc": "bin/isotc.js"

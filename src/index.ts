@@ -11,7 +11,7 @@ const program = new Command();
 
 program
   .name("isotc")
-  .description("Intent-to-Spec Optimal Transport Compiler - 意図を保護し生成的負債を防ぐCLI")
+  .description("Intent-to-Spec Optimal Transport Compiler - 仕様・アーキテクチャ境界の検証とトレーサビリティ支援CLI")
   .version("0.1.0");
 
 program.addCommand(initCommand());
