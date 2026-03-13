@@ -1,0 +1,30 @@
+# isotc-cli 憲法（アーキテクチャ規約）
+# レイヤー定義: name=レイヤー名, basePath=ソースパス（glob対応）
+
+[[layers]]
+name = "domain"
+basePath = "src/domain/**"
+
+[[layers]]
+name = "application"
+basePath = "src/application/**"
+
+[[layers]]
+name = "infrastructure"
+basePath = "src/infrastructure/**"
+
+[[layers]]
+name = "presentation"
+basePath = "src/presentation/**"
+
+# 依存ルール: 各レイヤーがインポートを許可するレイヤー
+# domain は他に依存しない
+# application は domain のみ
+# infrastructure は domain, application を許可
+# presentation は domain, application, infrastructure を許可
+
+[rules]
+domain = []
+application = ["domain"]
+infrastructure = ["domain", "application"]
+presentation = ["domain", "application", "infrastructure"]

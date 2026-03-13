@@ -1,0 +1,42 @@
+{
+  "name": "isotc-cli",
+  "version": "0.1.0",
+  "description": "Intent-to-Spec Optimal Transport Compiler CLI - AI駆動開発における意図保護と生成的負債防止",
+  "main": "dist/index.js",
+  "bin": {
+    "isotc": "bin/isotc.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node bin/isotc.js",
+    "verify": "node bin/isotc.js verify",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "cli",
+    "architecture",
+    "ai",
+    "verification",
+    "intent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "@iarna/toml": "^2.2.5",
+    "ts-morph": "^24.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ]
+}
