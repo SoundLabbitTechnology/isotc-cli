@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/trace.schema.json",
+  "title": "Trace Graph",
+  "description": "requirement -> adr -> task -> file -> symbol -> test -> violation の連結グラフ",
+  "type": "object",
+  "required": ["version", "generatedAt", "nodes", "edges"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "enum": ["requirement", "adr", "task", "file", "symbol", "test", "violation"]
+          },
+          "label": { "type": "string" },
+          "file": { "type": "string", "description": "symbol 型の場合の所属ファイル" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "type": {
+            "enum": ["satisfies", "implements", "defines", "tests", "violates", "decides", "references"]
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

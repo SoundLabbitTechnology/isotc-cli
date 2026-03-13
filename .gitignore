@@ -26,3 +26,6 @@ coverage/
 .env
 .env.local
 *.local
+
+# Generated (trace build の出力)
+.spec/trace.json

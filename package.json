@@ -1,6 +1,6 @@
 {
   "name": "isotc-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Intent-to-Spec Optimal Transport Compiler CLI - 仕様・アーキテクチャ境界の検証とトレーサビリティ支援",
   "main": "dist/index.js",
   "bin": {
@@ -37,6 +37,7 @@
     "@iarna/toml": "^2.2.5",
     "commander": "^12.0.0",
     "minimatch": "^9.0.9",
+    "openai": "^6.27.0",
     "ts-morph": "^24.0.0"
   },
   "devDependencies": {
@@ -47,6 +48,8 @@
   "files": [
     "bin",
     "dist",
+    "schemas",
+    "resources",
     "LICENSE",
     "NOTICE"
   ]

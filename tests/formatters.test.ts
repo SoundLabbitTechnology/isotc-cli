@@ -74,5 +74,21 @@ describe("Formatters", () => {
       expect(output).toContain("domain");
       expect(output).toContain("infrastructure");
     });
+
+    it("CyclicDependencyViolation の場合はサイクル情報を返す", () => {
+      const violations: Counterexample[] = [
+        {
+          type: "CyclicDependencyViolation",
+          sourceFile: "src/a.ts",
+          cycle: ["src/a.ts", "src/b.ts", "src/a.ts"],
+          suggestion: "循環依存を解消してください。",
+        },
+      ];
+      const formatter = new TextFormatter();
+      const output = formatter.format(violations, constitution);
+      expect(output).toContain("循環依存");
+      expect(output).toContain("src/a.ts");
+      expect(output).toContain("src/b.ts");
+    });
   });
 });

@@ -27,7 +27,29 @@ isotc init
 # → .spec/constitution.toml が生成される
 ```
 
-### 2. アーキテクチャ検証
+### 2. 仕様→計画→実装→検証のフロー
+
+```bash
+# 自然言語要件を構造化（OPENAI_API_KEY が必要）
+isotc intent "ユーザーはメールでログインできる。応答は200ms以内とする。"
+# → .spec/requirements.json, open_questions.md, assumptions.toml を生成
+
+# 設計とタスク分解（未解決の質問がある場合は失敗。--force で強制実行可）
+isotc plan
+# → .spec/tasks.json, design.md, adr/, model.puml, testplan.json, trace-seed.json を生成
+
+# トレーサビリティグラフの構築
+isotc trace build
+# → .spec/trace.json を生成
+
+# タスク単位の隔離プロンプトで実装委譲
+isotc impl --task-id 1.1 --isolated-prompt > prompt.txt
+
+# アーキテクチャ検証
+isotc verify
+```
+
+### 3. アーキテクチャ検証
 
 ```bash
 # 人間向けテキスト出力
@@ -39,7 +61,7 @@ isotc verify --format json
 
 **終了コード**: `0` = 成功 / `2` = 違反あり（AIの自己修復ループに利用）
 
-### 3. CI での利用（GitHub Actions）
+### 4. CI での利用（GitHub Actions）
 
 ```yaml
 - run: npm ci && npm run build
@@ -52,10 +74,20 @@ isotc verify --format json
 | コマンド | 説明 |
 |----------|------|
 | `init` | 憲法ファイル（.spec/constitution.toml）の生成 |
-| `intent` | 自然言語要件から構造化要件の生成（未実装） |
-| `plan` | 技術設計とタスク分解（未実装） |
+| `intent` | 自然言語要件から構造化要件の生成（requirements.json, open_questions.md, assumptions.toml） |
+| `plan` | 技術設計とタスク分解（design.md, adr/, model.puml, testplan.json, trace-seed.json） |
 | `impl` | AIエージェントへの実装委譲（`--isolated-prompt` で隔離プロンプト生成） |
-| `verify` | アーキテクチャ検証と反例（進化圧）の出力 |
+| `verify` | アーキテクチャ検証（import/re-export/パッケージ/循環依存）と反例の出力 |
+| `trace build` | トレーサビリティグラフ（trace.json）の構築 |
+| `trace diff` | 変更ファイルから影響する requirement / test を列挙 |
+| `trace explain` | ファイル・違反がどの要件にぶつかるかを返す |
+
+### 環境変数
+
+| 変数 | 説明 |
+|------|------|
+| `OPENAI_API_KEY` | intent / plan で LLM 呼び出し時に必須 |
+| `ISOTC_LLM_MODEL` | 使用するモデル（デフォルト: gpt-4o-mini） |
 
 ### コンテキストクリアの推奨ワークフロー
 
@@ -84,11 +116,18 @@ domain = []
 application = ["domain"]
 infrastructure = ["domain", "application"]
 
+# オプション: レイヤーごとのパッケージ import ルール
+[rules.packages.domain]
+allow = []
+deny = ["fs", "path", "process"]
+
 [steering]
 codingStandards = "ESLint + Prettier を推奨"
 technologyStack = "TypeScript, Node.js 18+"
 designPrinciples = "ヘキサゴナルアーキテクチャを厳守"
 ```
+
+`verify` は import 違反に加え、re-export、パッケージ import、循環依存を検出します。
 
 ## ドキュメント
 

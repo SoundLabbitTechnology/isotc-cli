@@ -6,6 +6,7 @@ import { intentCommand } from "./presentation/commands/intentCommand";
 import { planCommand } from "./presentation/commands/planCommand";
 import { implCommand } from "./presentation/commands/implCommand";
 import { verifyCommand } from "./presentation/commands/verifyCommand";
+import { traceCommand } from "./presentation/commands/traceCommand";
 
 const program = new Command();
 
@@ -19,5 +20,6 @@ program.addCommand(intentCommand());
 program.addCommand(planCommand());
 program.addCommand(implCommand());
 program.addCommand(verifyCommand());
+program.addCommand(traceCommand());
 
 program.parse();

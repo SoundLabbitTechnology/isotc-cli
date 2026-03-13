@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/requirements.schema.json",
+  "title": "Requirements Document",
+  "description": "構造化要件 IR（isotc intent の出力）",
+  "type": "object",
+  "required": ["version", "generatedAt"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "functionalRequirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "summary"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]+$" },
+          "summary": { "type": "string" },
+          "description": { "type": "string" },
+          "acceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+          "priority": { "enum": ["must", "should", "could"] }
+        }
+      }
+    },
+    "nonFunctionalRequirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "summary"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]+$" },
+          "category": { "type": "string" },
+          "summary": { "type": "string" },
+          "description": { "type": "string" },
+          "metric": { "type": "string" },
+          "priority": { "enum": ["must", "should", "could"] }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "expression"],
+        "properties": {
+          "id": { "type": "string" },
+          "expression": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition"],
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "type": "string" }
+        }
+      }
+    },
+    "forbidden": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rule"],
+        "properties": {
+          "id": { "type": "string" },
+          "rule": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "ambiguousTerms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "location", "suggestion"],
+        "properties": {
+          "term": { "type": "string" },
+          "location": { "type": "string" },
+          "suggestion": { "type": "string" }
+        }
+      }
+    },
+    "openQuestionIds": { "type": "array", "items": { "type": "string" } },
+    "assumptionIds": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

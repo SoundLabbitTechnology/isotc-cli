@@ -13,11 +13,20 @@ export class TextFormatter implements IOutputFormatter {
     let output = "# 🚨 Architecture Verification Failed\n";
     output += "機能するかもしれませんが、アーキテクチャ規約に違反しています。\n\n";
     for (const v of violations) {
-      output += `## ${v.sourceFile}:${v.lineNumber}\n`;
-      output += `- **違反**: ${v.sourceLayer} → ${v.targetLayer}\n`;
-      output += `- **インポート**: ${v.importedModule}\n`;
-      output += `- **提案**: ${v.suggestion}\n`;
-      output += `\`\`\`\n${v.codeSnippet}\n\`\`\`\n\n`;
+      const loc = v.lineNumber != null ? `:${v.lineNumber}` : "";
+      output += `## ${v.sourceFile}${loc}\n`;
+      if (v.type === "CyclicDependencyViolation" && v.cycle) {
+        output += `- **違反**: 循環依存\n`;
+        output += `- **サイクル**: ${v.cycle.join(" → ")} → ${v.cycle[0]}\n`;
+      } else if (v.sourceLayer && v.targetLayer) {
+        output += `- **違反**: ${v.sourceLayer} → ${v.targetLayer}\n`;
+        if (v.importedModule) output += `- **インポート**: ${v.importedModule}\n`;
+      } else if (v.importedModule) {
+        output += `- **インポート**: ${v.importedModule}\n`;
+      }
+      if (v.suggestion) output += `- **提案**: ${v.suggestion}\n`;
+      if (v.codeSnippet) output += `\`\`\`\n${v.codeSnippet}\n\`\`\`\n`;
+      output += "\n";
     }
     return output;
   }

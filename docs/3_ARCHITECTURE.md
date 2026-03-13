@@ -16,29 +16,39 @@ isotc-cli/
 │   ├── index.ts                 # CLIのセットアップ（Commander.js）
 │   │
 │   ├── presentation/            # ① CLI層（引数処理・出力制御）
-│   │   ├── commands/             # verify, plan, init, intent, impl のコマンド定義
+│   │   ├── commands/             # init, intent, plan, impl, verify, trace
 │   │   └── formatters/           # IOutputFormatter (JSON/Textの出し分け)
 │   │
 │   ├── application/             # ② ユースケース層
-│   │   └── usecases/
-│   │       └── verifyArchitectureUseCase.ts
+│   │   ├── usecases/             # verifyArchitecture, extractIntent, generatePlan, buildTrace, traceDiff, traceExplain
+│   │   ├── prompts/              # LLM プロンプトテンプレート
+│   │   └── services/             # intentOutputRenderer 等
 │   │
 │   ├── domain/                  # ③ ドメイン層（コアビジネスロジック）
 │   │   ├── entities/
 │   │   │   ├── constitution.ts   # 憲法（アーキテクチャルール）
 │   │   │   ├── dependencyNode.ts # 依存関係の抽象モデル
-│   │   │   └── counterexample.ts # 反例（進化圧）
+│   │   │   ├── counterexample.ts # 反例（進化圧）
+│   │   │   ├── requirements.ts  # 構造化要件 IR
+│   │   │   ├── traceGraph.ts     # トレーサビリティグラフ
+│   │   │   └── ...
 │   │   └── services/
-│   │       └── ruleValidator.ts  # 違反判定ロジック
+│   │       └── ruleValidator.ts  # 違反判定（import/re-export/パッケージ/循環依存）
 │   │
 │   └── infrastructure/          # ④ インフラストラクチャ層（アダプター）
-│       ├── ports/                # ドメイン層が要求するインターフェース
+│       ├── ports/
 │       │   ├── iFileSystem.ts
-│       │   └── iAstParser.ts
-│       └── adapters/             # 実際の実装
+│       │   ├── iAstParser.ts
+│       │   ├── iLlmAdapter.ts
+│       │   └── iSymbolExtractor.ts
+│       └── adapters/
 │           ├── localFileSystemAdapter.ts
-│           └── typeScriptAstAdapter.ts
+│           ├── typeScriptAstAdapter.ts
+│           ├── openAILlmAdapter.ts
+│           └── typeScriptSymbolExtractor.ts
 │
+├── schemas/                     # JSON Schema（requirements, trace）
+├── resources/prompts/           # プロンプトテンプレート（Markdown）
 └── tests/                       # テストコード
 ```
 
