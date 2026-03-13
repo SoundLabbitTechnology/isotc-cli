@@ -20,7 +20,7 @@ describe("Formatters", () => {
       expect(parsed.durationMs).toBe(100);
     });
 
-    it("違反がある場合は status: failed と violations を返す", () => {
+    it("違反がある場合は status: failed と violations と repairPrompt を返す", () => {
       const violations: Counterexample[] = [
         {
           type: "ArchitectureViolation",
@@ -40,6 +40,9 @@ describe("Formatters", () => {
       expect(parsed.violations).toHaveLength(1);
       expect(parsed.violations[0].file).toBe("src/domain/user.ts");
       expect(parsed.violations[0].line).toBe(12);
+      expect(parsed.repairPrompt).toBeDefined();
+      expect(parsed.repairPrompt).toContain("アーキテクチャ違反");
+      expect(parsed.repairPrompt).toContain("src/domain/user.ts");
     });
   });
 

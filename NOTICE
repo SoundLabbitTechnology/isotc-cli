@@ -1,0 +1,17 @@
+isotc-cli - Intent-to-Spec Optimal Transport Compiler CLI
+Copyright (c) 2025 Sound Labbit Technology Inc.
+
+This product includes software developed by Sound Labbit Technology Inc.
+as part of its lab activities.
+
+---
+
+Third-Party Licenses
+
+This software uses the following open source packages.
+See the full license text in node_modules/<package>/ for each dependency.
+
+- commander (MIT)
+- @iarna/toml (ISC)
+- minimatch (ISC)
+- ts-morph (MIT)

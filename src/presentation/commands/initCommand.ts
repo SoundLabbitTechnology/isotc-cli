@@ -32,6 +32,13 @@ domain = []
 application = ["domain"]
 infrastructure = ["domain", "application"]
 presentation = ["domain", "application", "infrastructure"]
+
+# Agent Steering: プロジェクト全体のルール（AI が強制参照）
+# plan / impl 実行時に AI へのコンテキストに含める
+[steering]
+codingStandards = "ESLint + Prettier を推奨。型定義は厳格に。"
+technologyStack = "TypeScript, Node.js 18+"
+designPrinciples = "ヘキサゴナルアーキテクチャを厳守。依存性は内側に向ける。"
 `;
 
 export function initCommand(): Command {

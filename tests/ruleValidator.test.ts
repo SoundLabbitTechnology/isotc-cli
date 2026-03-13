@@ -31,7 +31,7 @@ describe("RuleValidator", () => {
     expect(violations).toEqual([]);
   });
 
-  it("違反がある場合は Counterexample を返す（実装後）", () => {
+  it("違反がある場合は Counterexample を返す", () => {
     const validator = new RuleValidator(constitution, "/project");
     const dependencies: DependencyNode[] = [
       {
@@ -42,7 +42,9 @@ describe("RuleValidator", () => {
       },
     ];
     const violations = validator.checkViolations(dependencies);
-    // 現状は stub で [] を返す。実装後は violations.length > 0 になる想定
-    expect(Array.isArray(violations)).toBe(true);
+    expect(violations).toHaveLength(1);
+    expect(violations[0].sourceLayer).toBe("domain");
+    expect(violations[0].targetLayer).toBe("infrastructure");
+    expect(violations[0].suggestion).toContain("依存性注入");
   });
 });

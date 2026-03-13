@@ -1,0 +1,9 @@
+{
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "RuleValidator の実装",
+      "description": "constitution.rules に基づき依存関係の違反を検出するロジックを実装する。"
+    }
+  ]
+}

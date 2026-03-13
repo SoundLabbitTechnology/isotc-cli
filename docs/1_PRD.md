@@ -47,6 +47,10 @@
 | **AI** | 明確な制約と、失敗時の構造化されたフィードバックによる推論のガイド |
 | **組織** | アーキテクチャの一貫性維持、技術的負債の早期検出 |
 
+### 5.1 Architecture-as-a-Guardrail の位置づけ
+
+「Text-to-Code」のみではエンタープライズのアーキテクチャ境界を守れない。isotc-cli は **Architecture-as-a-Guardrail** の思想に基づき、LLM の出力を静的解析（AST ベースの import-linter）で検証する。違反時は reject し、構造化された反例（`repairPrompt`）を AI にフィードバックして自己修復を促す。LLM を置き換えるのではなく、**シンボリックなルールベースのガードレール**として補完する。
+
 ---
 
 ## 6. 成功指標 (Success Criteria)

@@ -54,12 +54,25 @@ isotc verify --format json
 | `init` | 憲法ファイル（.spec/constitution.toml）の生成 |
 | `intent` | 自然言語要件から構造化要件の生成（未実装） |
 | `plan` | 技術設計とタスク分解（未実装） |
-| `impl` | AIエージェントへの実装委譲（未実装） |
+| `impl` | AIエージェントへの実装委譲（`--isolated-prompt` で隔離プロンプト生成） |
 | `verify` | アーキテクチャ検証と反例（進化圧）の出力 |
+
+### コンテキストクリアの推奨ワークフロー
+
+タスク切り替え時は、前タスクの会話履歴に引っ張られず仕様に集中するため、**コンテキストを切る**ことを推奨します。
+
+```bash
+# タスク 1.1 の隔離プロンプトを生成
+isotc impl --task-id 1.1 --isolated-prompt > prompt_1.1.txt
+
+# 新規チャットを開き、prompt_1.1.txt の内容を貼り付けて実装
+# タスク 1.2 に進む際は /clear または新規チャットで再度
+isotc impl --task-id 1.2 --isolated-prompt > prompt_1.2.txt
+```
 
 ## 憲法（Constitution）
 
-`.spec/constitution.toml` でレイヤーと依存ルールを定義します。
+`.spec/constitution.toml` でレイヤー、依存ルール、Agent Steering を定義します。
 
 ```toml
 [[layers]]
@@ -70,6 +83,11 @@ basePath = "src/domain/**"
 domain = []
 application = ["domain"]
 infrastructure = ["domain", "application"]
+
+[steering]
+codingStandards = "ESLint + Prettier を推奨"
+technologyStack = "TypeScript, Node.js 18+"
+designPrinciples = "ヘキサゴナルアーキテクチャを厳守"
 ```
 
 ## ドキュメント
@@ -88,4 +106,12 @@ npm test
 
 ## License
 
-MIT
+本プロジェクトは [MIT License](LICENSE) の下で公開されています。
+
+Copyright (c) 2025 Sound Labbit Technology Inc.
+
+---
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - 貢献ガイドライン
+- [SECURITY.md](SECURITY.md) - 脆弱性報告について
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - 行動規範

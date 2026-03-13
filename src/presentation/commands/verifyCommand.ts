@@ -40,6 +40,10 @@ export function verifyCommand(): Command {
         process.exit(EXIT_FATAL);
       }
 
+      if (options.format === "text") {
+        console.error("解析中...");
+      }
+
       const astParser = new TypeScriptAstAdapter();
       const useCase = new VerifyArchitectureUseCase(astParser);
       const violations = useCase.execute(cwd, constitution);
@@ -49,7 +53,7 @@ export function verifyCommand(): Command {
         options.format === "json" ? new JsonFormatter() : new TextFormatter();
       const output = formatter.format(violations, constitution, durationMs);
 
-      // JSON 時は stdout に純粋な JSON のみ。テキスト時も stdout
+      // JSON 時は stdout に純粋な JSON のみ。プログレス・ログは stderr。
       console.log(output);
 
       if (violations.length > 0) {
