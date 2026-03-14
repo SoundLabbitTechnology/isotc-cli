@@ -1,0 +1,15 @@
+{
+  "name": "isotc-cli",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "postCreateCommand": "npm ci && npm run build",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}

@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name("isotc")
   .description("Intent-to-Spec Optimal Transport Compiler - 仕様・アーキテクチャ境界の検証とトレーサビリティ支援CLI")
-  .version("0.1.0");
+  .version("0.2.0");
 
 program.addCommand(initCommand());
 program.addCommand(intentCommand());

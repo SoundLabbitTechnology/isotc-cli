@@ -7,15 +7,22 @@ AI駆動開発の本質的な転換点は、コード生成能力そのもので
 ## インストール
 
 ```bash
-# クローン
+# 一行で実行（推奨）
+npx isotc-cli@latest verify
+
+# または
+npm exec --yes isotc-cli@latest -- verify
+```
+
+以下、`isotc` は `npx isotc-cli@latest` の省略形として記載します。
+
+### 開発者向け（ソースビルド）
+
+```bash
 git clone https://github.com/SoundLabbitTechnology/isotc-cli.git
 cd isotc-cli
-
-# ビルド
 npm install && npm run build
-
-# グローバルにインストール（任意）
-npm link
+npm link  # 任意
 ```
 
 ## 使い方
@@ -64,9 +71,22 @@ isotc verify --format json
 ### 4. CI での利用（GitHub Actions）
 
 ```yaml
-- run: npm ci && npm run build
-- run: isotc init --force
-- run: isotc verify
+- uses: actions/checkout@v4
+- uses: actions/setup-node@v4
+  with:
+    node-version: "20"
+    cache: "npm"
+- run: npx isotc-cli@latest init --force
+- run: npx isotc-cli@latest verify
+```
+
+composite action を使う場合:
+
+```yaml
+- uses: actions/checkout@v4
+- uses: SoundLabbitTechnology/isotc-cli/.github/actions/setup-isotc@main
+- run: npx isotc-cli@latest init --force
+- run: npx isotc-cli@latest verify
 ```
 
 ## コマンド一覧

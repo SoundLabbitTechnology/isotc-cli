@@ -5,9 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci && npm install -g isotc-cli
-      - run: |
-          set +e
-          OUTPUT=$(isotc verify)
-          echo "$OUTPUT"
-          # 違反があればPRに自動コメントする処理がここに入る
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci && npm run build
+      - run: npx . init --force
+      - run: npx . verify

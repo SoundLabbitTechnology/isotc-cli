@@ -1,0 +1,14 @@
+name: "Setup isotc"
+description: "Install isotc-cli for architecture verification. Use before running isotc verify."
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "npm"
+
+    - name: Cache isotc-cli
+      run: npm exec --yes isotc-cli@latest -- --version
+      shell: bash
