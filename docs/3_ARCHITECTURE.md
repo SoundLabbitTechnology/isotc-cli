@@ -1,6 +1,6 @@
 # isotc-cli 内部アーキテクチャ設計書
 
-**参照**: [1_PRD.md](./1_PRD.md) | [2_REQUIREMENTS.md](./2_REQUIREMENTS.md)
+**参照**: [0_INDEX.md](./0_INDEX.md) | [1_PRD.md](./1_PRD.md) | [2_REQUIREMENTS.md](./2_REQUIREMENTS.md)
 
 ---
 
@@ -16,7 +16,7 @@ isotc-cli/
 │   ├── index.ts                 # CLIのセットアップ（Commander.js）
 │   │
 │   ├── presentation/            # ① CLI層（引数処理・出力制御）
-│   │   ├── commands/             # init, intent, plan, impl, verify, trace
+│   │   ├── commands/             # init, intent, plan, impl, handoff, verify, trace, emit, doctor
 │   │   └── formatters/           # IOutputFormatter (JSON/Textの出し分け)
 │   │
 │   ├── application/             # ② ユースケース層
@@ -47,7 +47,7 @@ isotc-cli/
 │           ├── openAILlmAdapter.ts
 │           └── typeScriptSymbolExtractor.ts
 │
-├── schemas/                     # JSON Schema（requirements, trace）
+├── schemas/                     # JSON Schema（verify-result, requirements, tasks, trace）
 ├── resources/prompts/           # プロンプトテンプレート（Markdown）
 └── tests/                       # テストコード
 ```
@@ -64,3 +64,19 @@ isotc-cli/
 | **Application** | 憲法の読み込みと検証ユースケースの実行 |
 | **Domain** | RuleValidator（依存関係とルールの照合、反例生成）、Constitution/Counterexample エンティティ |
 | **Infrastructure** | ts-morph を用いたAST解析（TypeScriptAstAdapter）、ローカルファイルシステム（LocalFileSystemAdapter） |
+
+---
+
+## コマンドとレイヤー対応
+
+| コマンド | Presentation | Application | Domain | Infrastructure |
+|----------|---------------|-------------|--------|-----------------|
+| init | initCommand | - | Constitution | LocalFileSystemAdapter |
+| intent | intentCommand | ExtractIntentUseCase | Requirements | OpenAILlmAdapter, LocalFileSystemAdapter |
+| plan | planCommand | GeneratePlanUseCase | Constitution, Requirements | OpenAILlmAdapter, LocalFileSystemAdapter |
+| impl | implCommand | - | - | LocalFileSystemAdapter |
+| handoff | handoffCommand | - | Constitution | LocalFileSystemAdapter |
+| verify | verifyCommand | VerifyArchitectureUseCase | RuleValidator, Counterexample | TypeScriptAstAdapter |
+| trace | traceCommand | BuildTraceUseCase, TraceDiffUseCase, TraceExplainUseCase | TraceGraph | LocalFileSystemAdapter, TypeScriptSymbolExtractor |
+| emit | emitCommand | - | Constitution | LocalFileSystemAdapter |
+| doctor | doctorCommand | - | - | LocalFileSystemAdapter |

@@ -31,6 +31,11 @@ npm run build
 npm test
 ```
 
+### ドキュメント更新
+
+- コマンド追加・オプション変更時は [docs/2_REQUIREMENTS.md](docs/2_REQUIREMENTS.md) を更新する
+- 新規ドキュメントは [docs/0_INDEX.md](docs/0_INDEX.md) に登録する
+
 ### コーディング規約
 
 - TypeScript の厳格モードに従う

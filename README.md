@@ -169,12 +169,33 @@ designPrinciples = "ヘキサゴナルアーキテクチャを厳守"
 
 `verify` は import 違反に加え、re-export、パッケージ import、循環依存を検出します。
 
+## Agent 配布（emit）
+
+constitution を定義した後、`isotc emit` で各 Agent 環境向けの設定ファイルを生成できる。
+
+```bash
+# GitHub Copilot 用
+isotc emit copilot --force
+
+# Claude Code 用
+isotc emit claude --force
+
+# GitHub Agents 用
+isotc emit agents --force
+```
+
+生成されたファイルは、各 Agent が constitution に基づいたアーキテクチャ規約を参照するための指示として機能する。詳細は [AGENTS.md](AGENTS.md) を参照。
+
 ## ドキュメント
 
-- [PRD](docs/1_PRD.md) - プロダクト要求仕様書
-- [要求仕様書](docs/2_REQUIREMENTS.md) - コマンド契約・I/O仕様
-- [アーキテクチャ設計](docs/3_ARCHITECTURE.md) - 内部構成
-- [研究背景](docs/4_RESEARCH_BACKGROUND.md) - 学術的裏付けと参考文献
+| ドキュメント | 内容 |
+|--------------|------|
+| [docs/0_INDEX.md](docs/0_INDEX.md) | ドキュメント一覧・ナビゲーション |
+| [docs/1_PRD.md](docs/1_PRD.md) | プロダクト要求仕様書 |
+| [docs/2_REQUIREMENTS.md](docs/2_REQUIREMENTS.md) | コマンド契約・I/O仕様・JSON Schema |
+| [docs/3_ARCHITECTURE.md](docs/3_ARCHITECTURE.md) | 内部アーキテクチャ設計 |
+| [docs/4_RESEARCH_BACKGROUND.md](docs/4_RESEARCH_BACKGROUND.md) | 学術的裏付けと参考文献 |
+| [AGENTS.md](AGENTS.md) | AI エージェント向けガイド（機械可読コマンド一覧） |
 
 ## 開発
 
