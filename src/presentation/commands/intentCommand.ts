@@ -1,7 +1,12 @@
 import { Command } from "commander";
 import * as path from "path";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
-import { OpenAILlmAdapter } from "../../infrastructure/adapters/openAILlmAdapter";
+import { createLlmAdapter } from "../../infrastructure/adapters/llmAdapterFactory";
+import {
+  loadLlmConfig,
+  getEffectiveProvider,
+  getEffectiveModel,
+} from "../../application/services/configLoader";
 import { ExtractIntentUseCase } from "../../application/usecases/extractIntentUseCase";
 import { renderOpenQuestionsMarkdown } from "../../application/services/intentOutputRenderer";
 import { renderAssumptionsToml } from "../../application/services/intentOutputRenderer";
@@ -38,7 +43,10 @@ export function intentCommand(): Command {
       const assumptionsPath = path.join(specDir, "assumptions.toml");
 
       try {
-        const llmAdapter = new OpenAILlmAdapter();
+        const config = await loadLlmConfig(cwd);
+        const provider = getEffectiveProvider(cwd, config);
+        const model = getEffectiveModel(provider, config);
+        const llmAdapter = createLlmAdapter({ provider, model });
         const useCase = new ExtractIntentUseCase(llmAdapter, fileSystem);
         const result = await useCase.execute(requirementText);
 

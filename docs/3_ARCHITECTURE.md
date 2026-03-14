@@ -45,6 +45,9 @@ isotc-cli/
 │           ├── localFileSystemAdapter.ts
 │           ├── typeScriptAstAdapter.ts
 │           ├── openAILlmAdapter.ts
+│           ├── geminiLlmAdapter.ts
+│           ├── claudeLlmAdapter.ts
+│           ├── llmAdapterFactory.ts
 │           └── typeScriptSymbolExtractor.ts
 │
 ├── schemas/                     # JSON Schema（verify-result, requirements, tasks, trace）
@@ -72,8 +75,8 @@ isotc-cli/
 | コマンド | Presentation | Application | Domain | Infrastructure |
 |----------|---------------|-------------|--------|-----------------|
 | init | initCommand | - | Constitution | LocalFileSystemAdapter |
-| intent | intentCommand | ExtractIntentUseCase | Requirements | OpenAILlmAdapter, LocalFileSystemAdapter |
-| plan | planCommand | GeneratePlanUseCase | Constitution, Requirements | OpenAILlmAdapter, LocalFileSystemAdapter |
+| intent | intentCommand | ExtractIntentUseCase | Requirements | createLlmAdapter (OpenAI/Gemini/Claude), LocalFileSystemAdapter |
+| plan | planCommand | GeneratePlanUseCase | Constitution, Requirements | createLlmAdapter (OpenAI/Gemini/Claude), LocalFileSystemAdapter |
 | impl | implCommand | - | - | LocalFileSystemAdapter |
 | handoff | handoffCommand | - | Constitution | LocalFileSystemAdapter |
 | verify | verifyCommand | VerifyArchitectureUseCase | RuleValidator, Counterexample | TypeScriptAstAdapter |

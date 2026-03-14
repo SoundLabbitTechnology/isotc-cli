@@ -8,11 +8,12 @@
 
 ```
 docs/
-├── 0_INDEX.md           # 本ファイル（ナビゲーション）
-├── 1_PRD.md             # プロダクト要求仕様書
-├── 2_REQUIREMENTS.md    # コマンド契約・I/O仕様
-├── 3_ARCHITECTURE.md    # 内部アーキテクチャ設計
-└── 4_RESEARCH_BACKGROUND.md  # 学術的裏付けと参考文献
+├── 0_INDEX.md              # 本ファイル（ナビゲーション）
+├── 1_PRD.md                # プロダクト要求仕様書
+├── 2_REQUIREMENTS.md       # コマンド契約・I/O仕様
+├── 3_ARCHITECTURE.md       # 内部アーキテクチャ設計
+├── 4_RESEARCH_BACKGROUND.md  # 学術的裏付けと参考文献
+└── TEST_SIMULATION_REPORT.md  # テストシミュレーション・棚卸し表（レビュー対応）
 ```
 
 ## 読者別ガイド
@@ -23,6 +24,7 @@ docs/
 | **AI エージェント** | [AGENTS.md](../AGENTS.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
 | **貢献者** | [CONTRIBUTING.md](../CONTRIBUTING.md) → [3_ARCHITECTURE.md](3_ARCHITECTURE.md) |
 | **プロダクト担当** | [1_PRD.md](1_PRD.md) → [4_RESEARCH_BACKGROUND.md](4_RESEARCH_BACKGROUND.md) |
+| **品質・契約確認** | [TEST_SIMULATION_REPORT.md](TEST_SIMULATION_REPORT.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
 
 ## ドキュメント概要
 

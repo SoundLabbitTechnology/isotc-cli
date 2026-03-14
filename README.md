@@ -121,13 +121,37 @@ composite action を使う場合:
 | `emit claude` | constitution から CLAUDE.md を生成（Claude Code 用） |
 | `emit agents` | constitution から .github/agents/architecture.agent.md を生成 |
 | `doctor` | 環境と .spec の健全性チェック |
+| `config` | LLM アダプター設定の表示・変更（.spec/config.toml） |
+
+### LLM アダプター設定（config）
+
+プロジェクトごとに LLM プロバイダーとモデルを `.spec/config.toml` に保存できます。`isotc init` 実行後に利用可能です。
+
+```bash
+# プロバイダーを Gemini に設定
+isotc config set provider gemini
+
+# モデルを指定
+isotc config set model gemini-2.5-flash
+
+# 現在の設定を確認
+isotc config show
+
+# 利用可能なプロバイダー一覧
+isotc config list-providers
+```
+
+優先順位: **環境変数 > .spec/config.toml > デフォルト**。API キーはセキュリティのため環境変数のみで指定します。
 
 ### 環境変数
 
 | 変数 | 説明 |
 |------|------|
-| `OPENAI_API_KEY` | intent / plan で LLM 呼び出し時に必須 |
-| `ISOTC_LLM_MODEL` | 使用するモデル（デフォルト: gpt-4o-mini） |
+| `ISOTC_LLM_PROVIDER` | LLM プロバイダー: `openai` \| `gemini` \| `claude`（デフォルト: openai） |
+| `ISOTC_LLM_MODEL` | 使用するモデル（プロバイダーごとのデフォルト: gpt-4o-mini / gemini-2.0-flash / claude-3-5-sonnet-20241022） |
+| `OPENAI_API_KEY` | OpenAI 利用時に必須 |
+| `GEMINI_API_KEY` または `GOOGLE_API_KEY` | Gemini 利用時に必須 |
+| `ANTHROPIC_API_KEY` | Claude 利用時に必須 |
 
 ### コンテキストクリアの推奨ワークフロー
 

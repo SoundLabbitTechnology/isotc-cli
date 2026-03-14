@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **LLM マルチプロバイダー対応**: intent / plan で OpenAI に加え Gemini・Claude を選択可能
+  - `ISOTC_LLM_PROVIDER`: `openai` | `gemini` | `claude`（デフォルト: openai）
+  - `GEMINI_API_KEY` / `GOOGLE_API_KEY`: Gemini 利用時
+  - `ANTHROPIC_API_KEY`: Claude 利用時
+  - `ISOTC_LLM_MODEL`: プロバイダーごとのモデル指定
+- **doctor 拡張**: 3 プロバイダー別の API キー状態をチェック（openApiKeySet, geminiApiKeySet, claudeApiKeySet）
+- **config コマンド**: LLM アダプター設定の管理
+  - `config set provider <openai|gemini|claude>` / `config set model <name>`
+  - `config show`: 有効な設定を表示（環境変数 > .spec/config.toml > デフォルト）
+  - `config list-providers`: プロバイダー一覧と必要な環境変数
+
+## [0.3.0] - 2026-03-14
+
+### Added
+
 - **プロダクト定義の更新**: Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail として再定義
 - **emit コマンド**: constitution から Agent 環境向け設定を生成
   - `emit copilot`: .github/copilot-instructions.md

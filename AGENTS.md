@@ -18,8 +18,9 @@ isotc-cli は **Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail*
 | `verify --format json` | 検証結果（status, violations, repairPrompt） |
 | `doctor --format json` | 環境チェック（constitution, openApiKeySet 等） |
 | `emit copilot --format json` | 生成パス（outputPath） |
+| `config show --format json` | 有効な LLM 設定（provider, model, source） |
 
-CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な JSON のみ出力される。
+CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な JSON のみ出力される。LLM 設定は `.spec/config.toml` でプロジェクト固有に保存可能（`isotc config set`）。
 
 ## 検証コマンド
 
@@ -30,7 +31,7 @@ CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な
 
 ## 環境チェック
 
-- `isotc doctor --format json`: constitution 存在、requirements.json、OPENAI_API_KEY 等をチェック。CI で事前確認に利用。
+- `isotc doctor --format json`: constitution 存在、requirements.json、LLM API キー（OPENAI / Gemini / Claude）をチェック。CI で事前確認に利用。
 
 ## Agent 配布（emit）
 

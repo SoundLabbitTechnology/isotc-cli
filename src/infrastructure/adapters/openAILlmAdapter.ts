@@ -4,7 +4,9 @@ import { ILlmAdapter } from "../ports/iLlmAdapter";
 export class OpenAILlmAdapter implements ILlmAdapter {
   private client: OpenAI;
 
-  constructor(apiKey?: string) {
+  private readonly model: string;
+
+  constructor(apiKey?: string, model?: string) {
     const key = apiKey ?? process.env.OPENAI_API_KEY;
     if (!key) {
       throw new Error(
@@ -12,6 +14,7 @@ export class OpenAILlmAdapter implements ILlmAdapter {
       );
     }
     this.client = new OpenAI({ apiKey: key });
+    this.model = model ?? process.env.ISOTC_LLM_MODEL ?? "gpt-4o-mini";
   }
 
   async complete(prompt: string, systemPrompt?: string): Promise<string> {
@@ -22,7 +25,7 @@ export class OpenAILlmAdapter implements ILlmAdapter {
     messages.push({ role: "user", content: prompt });
 
     const response = await this.client.chat.completions.create({
-      model: process.env.ISOTC_LLM_MODEL ?? "gpt-4o-mini",
+      model: this.model,
       messages,
       response_format: { type: "json_object" },
       temperature: 0.2,

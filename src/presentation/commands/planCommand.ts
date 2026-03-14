@@ -2,7 +2,12 @@ import { Command } from "commander";
 import * as path from "path";
 import * as toml from "@iarna/toml";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
-import { OpenAILlmAdapter } from "../../infrastructure/adapters/openAILlmAdapter";
+import { createLlmAdapter } from "../../infrastructure/adapters/llmAdapterFactory";
+import {
+  loadLlmConfig,
+  getEffectiveProvider,
+  getEffectiveModel,
+} from "../../application/services/configLoader";
 import { Constitution } from "../../domain/entities/constitution";
 import { RequirementsDocument } from "../../domain/entities/requirements";
 import { GeneratePlanUseCase } from "../../application/usecases/generatePlanUseCase";
@@ -57,7 +62,10 @@ export function planCommand(): Command {
       }
 
       try {
-        const llmAdapter = new OpenAILlmAdapter();
+        const config = await loadLlmConfig(cwd);
+        const provider = getEffectiveProvider(cwd, config);
+        const model = getEffectiveModel(provider, config);
+        const llmAdapter = createLlmAdapter({ provider, model });
         const useCase = new GeneratePlanUseCase(llmAdapter, fileSystem);
         const result = await useCase.execute(requirements, constitution);
 

@@ -24,6 +24,7 @@ describe("CLI スナップショット", () => {
     expect(output).toContain("trace");
     expect(output).toContain("emit");
     expect(output).toContain("doctor");
+    expect(output).toContain("config");
   });
 
   it("isotc verify --help の出力が期待通り", () => {

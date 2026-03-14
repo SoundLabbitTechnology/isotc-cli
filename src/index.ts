@@ -10,6 +10,7 @@ import { verifyCommand } from "./presentation/commands/verifyCommand";
 import { traceCommand } from "./presentation/commands/traceCommand";
 import { doctorCommand } from "./presentation/commands/doctorCommand";
 import { emitCommand } from "./presentation/commands/emitCommand";
+import { configCommand } from "./presentation/commands/configCommand";
 
 // バージョンは package.json から一元管理（dist/index.js から見て ../package.json）
 const { version } = require("../package.json") as { version: string };
@@ -30,5 +31,6 @@ program.addCommand(verifyCommand());
 program.addCommand(traceCommand());
 program.addCommand(doctorCommand());
 program.addCommand(emitCommand());
+program.addCommand(configCommand());
 
 program.parse();
