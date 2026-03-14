@@ -7,7 +7,7 @@
 
 ## 1. 文書の目的
 
-本ドキュメントは、AI駆動型開発において**意図（Intent）を保護**し、AI生成コードが非機能品質（とくに保守性）で負債を生みやすい問題への対策を提供するためのCLIツール isotc-cli の存在意義とプロダクトの方向性を定義する。
+本ドキュメントは、**Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail** として位置づける isotc-cli の存在意義とプロダクトの方向性を定義する。isotc-cli は、requirements / constraints / architecture decisions を実行可能な repo policy に変換する spec compiler であり、「設計ルールを検査する CLI」から「仕様をコンパイルし、エージェントへ配布し、人間中心に違反と不一致を制御する実行基盤」への進化を目指す。
 
 ---
 
@@ -42,7 +42,7 @@
 
 ## 5. 提供価値
 
-仕様主導・要件主導の方向性は、Progressive Prompting や TOML 仕様→テスト→コードの TDD 風ワークフローなど、近年の研究で強く支持されている。isotc-cli はその実践を支援する。
+isotc-cli は、仕様をコンパイルし、AI/人間/CI に同じ境界を配布し、違反を継続検査する。Progressive Prompting や TOML 仕様→テスト→コードの TDD 風ワークフローなど、近年の研究で強く支持される方向性を実践する。
 
 | 対象 | 価値 |
 |------|------|
@@ -50,9 +50,9 @@
 | **AI** | 明確な制約と、失敗時の構造化されたフィードバックによる推論のガイド |
 | **組織** | アーキテクチャの一貫性維持、技術的負債の早期検出 |
 
-### 5.1 Architecture-as-a-Guardrail の位置づけ
+### 5.1 Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail
 
-「Text-to-Code」のみではエンタープライズのアーキテクチャ境界を守れない。isotc-cli は **Architecture-as-a-Guardrail** の思想に基づき、LLM の出力を静的解析（AST ベースの import-linter）で検証する。違反時は reject し、構造化された反例（`repairPrompt`）を AI にフィードバックして自己修復を促す。LLM を置き換えるのではなく、**シンボリックなルールベースのガードレール**として補完する。
+isotc-cli は **Architecture-as-a-Guardrail** の思想を発展させ、以下を統合する。(1) **Spec Compiler**: 仕様・制約・設計決定を実行可能な repo policy に変換する。(2) **Agent Runtime Policy**: 生成した policy を GitHub Copilot / Claude / 複数エージェントの環境へ配布する（`emit` コマンド）。(3) **Human-Centered Guardrail**: 違反時の説明可能性・人間の制御・認知負荷低減を重視し、`repairPrompt` や HCD 項目で補完する。
 
 ---
 

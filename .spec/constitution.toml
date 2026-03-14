@@ -25,7 +25,7 @@ basePath = "src/presentation/**"
 
 [rules]
 domain = []
-application = ["domain", "infrastructure"]
+application = ["domain"]
 infrastructure = ["domain", "application"]
 presentation = ["domain", "application", "infrastructure"]
 

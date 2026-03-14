@@ -1,5 +1,7 @@
 # isotc-cli — AI エージェント向けガイド
 
+isotc-cli は **Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail** として、requirements / constraints / architecture decisions を実行可能な repo policy に変換する。コマンド契約・終了コード・I/O の詳細は [docs/2_REQUIREMENTS.md](docs/2_REQUIREMENTS.md) に準拠する。
+
 ## 最短導線
 
 - **推奨**: npm パッケージを一行で実行する。`npx isotc-cli@latest <command>`
@@ -9,6 +11,13 @@
 
 - アーキテクチャ検証: `isotc verify --format json`
 - CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な JSON のみ出力される。
+- pre-commit hook 用: `isotc verify --staged --format json`
+- 対象ファイル指定: `isotc verify --changed-files "src/a.ts,src/b.ts" --format json`
+- 出力読者指定: `isotc verify --audience agent`（developer | architect | agent）
+
+## 環境チェック
+
+- `isotc doctor --format json`: constitution 存在、requirements.json、OPENAI_API_KEY 等をチェック。CI で事前確認に利用。
 
 ## 終了コード契約
 

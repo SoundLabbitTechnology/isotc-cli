@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **プロダクト定義の更新**: Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail として再定義
+- **emit コマンド**: constitution から Agent 環境向け設定を生成
+  - `emit copilot`: .github/copilot-instructions.md
+  - `emit claude`: CLAUDE.md（Claude Code 用）
+  - `emit agents`: .github/agents/architecture.agent.md
+- **handoff コマンド**: 役割別ハンドオフ出力（implementer / reviewer / tester / architect）
+- **verify 拡張**:
+  - `--staged`: ステージ済みファイルのみ検証（pre-commit hook 用）
+  - `--changed-files`: 検証対象ファイルの指定（カンマ区切り）
+  - `--audience`: 出力の想定読者（developer | architect | agent）
+- **doctor コマンド**: 環境と .spec の健全性チェック（--format json）
+- **init / intent / plan**: `--format json` で機械可読出力
+- **schemas/verify-result.schema.json**: verify 出力の JSON Schema
+- **schemas/tasks.schema.json**: tasks.json の JSON Schema
+- **CLI スナップショットテスト・E2E テスト**: init → verify、doctor、emit の一周
+
+### Changed
+
+- バージョンを package.json から一元管理
+- README / PRD / AGENTS.md に新定義を反映
+
 ## [0.2.0] - 2026-03-14
 
 ### Added

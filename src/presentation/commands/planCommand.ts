@@ -12,7 +12,8 @@ export function planCommand(): Command {
     .description("要件からの技術設計とタスク（DAG）分解")
     .option("--approve", "対話確認をスキップし自動で設計を確定", false)
     .option("--force", "未解決の質問があっても強制実行", false)
-    .action(async (options: { approve?: boolean; force?: boolean }) => {
+    .option("--format <format>", "出力形式: text | json（CI/AI 連携用）", "text")
+    .action(async (options: { approve?: boolean; force?: boolean; format?: string }) => {
       const cwd = process.cwd();
       const fileSystem = new LocalFileSystemAdapter();
       const specDir = path.join(cwd, ".spec");
@@ -93,12 +94,26 @@ export function planCommand(): Command {
           )
         );
 
-        console.error(`✅ .spec/tasks.json を生成しました（タスク: ${result.tasks.length}）`);
-        console.error(`✅ .spec/design.md を生成しました`);
-        console.error(`✅ .spec/adr/0001-*.md を生成しました`);
-        console.error(`✅ .spec/model.puml を生成しました`);
-        console.error(`✅ .spec/testplan.json を生成しました`);
-        console.error(`✅ .spec/trace-seed.json を生成しました`);
+        const format = options.format ?? "text";
+        if (format === "json") {
+          console.log(
+            JSON.stringify({
+              status: "ok",
+              tasksPath: ".spec/tasks.json",
+              taskCount: result.tasks.length,
+              designPath: ".spec/design.md",
+              testplanPath: ".spec/testplan.json",
+              traceSeedPath: ".spec/trace-seed.json",
+            })
+          );
+        } else {
+          console.error(`✅ .spec/tasks.json を生成しました（タスク: ${result.tasks.length}）`);
+          console.error(`✅ .spec/design.md を生成しました`);
+          console.error(`✅ .spec/adr/0001-*.md を生成しました`);
+          console.error(`✅ .spec/model.puml を生成しました`);
+          console.error(`✅ .spec/testplan.json を生成しました`);
+          console.error(`✅ .spec/trace-seed.json を生成しました`);
+        }
       } catch (e) {
         console.error(`❌ エラー: ${e instanceof Error ? e.message : String(e)}`);
         process.exit(1);

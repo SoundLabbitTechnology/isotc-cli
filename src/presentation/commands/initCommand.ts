@@ -46,7 +46,8 @@ export function initCommand(): Command {
     .description("プロジェクトの初期化と憲法ファイルの生成")
     .option("-p, --pattern <pattern>", "テンプレート: hexagonal | mvc", "hexagonal")
     .option("-f, --force", "既存ファイルを上書き", false)
-    .action(async (options) => {
+    .option("--format <format>", "出力形式: text | json（CI/AI 連携用）", "text")
+    .action(async (options: { pattern?: string; force?: boolean; format?: string }) => {
       const cwd = process.cwd();
       const specDir = path.join(cwd, ".spec");
       const constitutionPath = path.join(specDir, "constitution.toml");
@@ -62,7 +63,18 @@ export function initCommand(): Command {
       const template = options.pattern === "mvc" ? HEXAGONAL_TEMPLATE : HEXAGONAL_TEMPLATE;
       await fileSystem.writeFile(constitutionPath, template);
 
-      console.log("✅ 初期化完了: .spec/constitution.toml を生成しました。");
+      const format = options.format ?? "text";
+      if (format === "json") {
+        console.log(
+          JSON.stringify({
+            status: "ok",
+            specDir: ".spec",
+            constitutionPath: ".spec/constitution.toml",
+          })
+        );
+      } else {
+        console.log("✅ 初期化完了: .spec/constitution.toml を生成しました。");
+      }
     });
 
   return cmd;

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/verify-result.schema.json",
+  "title": "Verify Result",
+  "description": "isotc verify --format json の出力スキーマ（2_REQUIREMENTS.md 3.2 準拠）",
+  "type": "object",
+  "required": ["status", "violations", "durationMs"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed"]
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "file", "message"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ArchitectureViolation",
+              "ReExportViolation",
+              "PackageViolation",
+              "CyclicDependencyViolation"
+            ]
+          },
+          "file": { "type": "string", "description": "プロジェクトルートからの相対パス" },
+          "line": { "type": "integer" },
+          "importedModule": { "type": "string" },
+          "sourceLayer": { "type": "string" },
+          "targetLayer": { "type": "string" },
+          "message": { "type": "string" },
+          "suggestion": { "type": "string" },
+          "codeSnippet": { "type": "string" },
+          "cycle": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "CyclicDependencyViolation 時のファイルパスリスト"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "repairPrompt": {
+      "type": "string",
+      "description": "AI 自己修復ループ用の修復指示文。違反時のみ出力"
+    },
+    "durationMs": { "type": "number" },
+    "audience": {
+      "type": "string",
+      "enum": ["developer", "architect", "agent"],
+      "description": "出力の想定読者（--audience オプション）"
+    }
+  },
+  "additionalProperties": false
+}

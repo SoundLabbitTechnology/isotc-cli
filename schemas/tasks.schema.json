@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/tasks.schema.json",
+  "title": "Tasks Document",
+  "description": ".spec/tasks.json（isotc plan の出力）",
+  "type": "object",
+  "required": ["tasks"],
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "description": "タスク ID（例: 1.1）" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "layer": { "type": "string", "description": "レイヤー名（domain, application, infrastructure 等）" },
+          "ownership": { "type": "string" },
+          "dependsOn": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "依存するタスク ID のリスト"
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "紐づく要件 ID（FR-1, NFR-1 等）"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

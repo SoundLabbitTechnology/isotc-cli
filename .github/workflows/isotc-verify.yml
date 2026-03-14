@@ -11,4 +11,4 @@ jobs:
           cache: "npm"
       - run: npm ci && npm run build
       - run: npx . init --force
-      - run: npx . verify
+      - run: npx . verify --format json

@@ -1,8 +1,8 @@
 # isotc-cli
 
-**Intent-to-Spec Optimal Transport Compiler CLI** — 仕様・テスト・アーキテクチャ境界を先に固定し、品質保証とトレーサビリティで閉じる開発様式を支援
+**Intent-to-Spec Optimal Transport Compiler CLI** — Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail
 
-AI駆動開発の本質的な転換点は、コード生成能力そのものではなく、仕様・テスト・アーキテクチャ境界を先に固定し、それを品質保証とトレーサビリティで閉じる開発様式への移行である。isotc-cli は、AIエージェントによる ad-hoc prompt-based development（Vibe-coding とも呼ばれる、仕様に基づかないコード生成）が引き起こすアーキテクチャ破壊を防ぎ、憲法（Constitution）に基づいた検証と自己修復を実現するCLIツールです。
+isotc-cli は、**requirements / constraints / architecture decisions を実行可能な repo policy に変換する spec compiler** である。単なる architecture linter ではなく、仕様をコンパイルし、AI/人間/CI に同じ境界を配布し、違反を継続検査する CLI として設計されている。憲法（Constitution）に基づいた検証と自己修復により、AIエージェントによる ad-hoc prompt-based development（Vibe-coding）が引き起こすアーキテクチャ破壊を防ぐ。
 
 ## インストール
 
@@ -64,9 +64,22 @@ isotc verify
 
 # CI / AI連携用 JSON 出力
 isotc verify --format json
+
+# pre-commit hook 用（ステージ済みファイルのみ検証）
+isotc verify --staged --format json
+
+# 対象ファイルを指定して検証
+isotc verify --changed-files "src/a.ts,src/b.ts" --format json
 ```
 
-**終了コード**: `0` = 成功 / `2` = 違反あり（AIの自己修復ループに利用）
+**終了コード**（[2_REQUIREMENTS.md](docs/2_REQUIREMENTS.md) 3.4 準拠）:
+
+| コード | 意味 |
+|-------|------|
+| 0 | 成功（検証パス、タスク完了） |
+| 1 | 一般的なエラー（引数間違い、設定欠損） |
+| 2 | 検証エラー（アーキテクチャ違反）— AI の自己修復ループに利用 |
+| 3 | 致命的なエラー（設定ファイル破損、解析不能） |
 
 ### 4. CI での利用（GitHub Actions）
 
@@ -77,8 +90,10 @@ isotc verify --format json
     node-version: "20"
     cache: "npm"
 - run: npx isotc-cli@latest init --force
-- run: npx isotc-cli@latest verify
+- run: npx isotc-cli@latest verify --format json
 ```
+
+CI / AI 連携時は `verify --format json` を指定し、stdout に純粋な JSON のみ出力させることを推奨します。
 
 composite action を使う場合:
 
@@ -86,7 +101,7 @@ composite action を使う場合:
 - uses: actions/checkout@v4
 - uses: SoundLabbitTechnology/isotc-cli/.github/actions/setup-isotc@main
 - run: npx isotc-cli@latest init --force
-- run: npx isotc-cli@latest verify
+- run: npx isotc-cli@latest verify --format json
 ```
 
 ## コマンド一覧
@@ -97,10 +112,15 @@ composite action を使う場合:
 | `intent` | 自然言語要件から構造化要件の生成（requirements.json, open_questions.md, assumptions.toml） |
 | `plan` | 技術設計とタスク分解（design.md, adr/, model.puml, testplan.json, trace-seed.json） |
 | `impl` | AIエージェントへの実装委譲（`--isolated-prompt` で隔離プロンプト生成） |
+| `handoff` | 役割別ハンドオフ出力（implementer / reviewer / tester / architect） |
 | `verify` | アーキテクチャ検証（import/re-export/パッケージ/循環依存）と反例の出力 |
 | `trace build` | トレーサビリティグラフ（trace.json）の構築 |
 | `trace diff` | 変更ファイルから影響する requirement / test を列挙 |
 | `trace explain` | ファイル・違反がどの要件にぶつかるかを返す |
+| `emit copilot` | constitution から .github/copilot-instructions.md を生成 |
+| `emit claude` | constitution から CLAUDE.md を生成（Claude Code 用） |
+| `emit agents` | constitution から .github/agents/architecture.agent.md を生成 |
+| `doctor` | 環境と .spec の健全性チェック |
 
 ### 環境変数
 
@@ -172,6 +192,6 @@ Copyright (c) 2025 Sound Labbit Technology Inc.
 
 ---
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) - 貢献ガイドライン
+- [CONTRIBUTING.md](CONTRIBUTING.md) - 貢献ガイドライン（互換性ポリシー・破壊的変更ポリシー含む）
 - [SECURITY.md](SECURITY.md) - 脆弱性報告について
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - 行動規範

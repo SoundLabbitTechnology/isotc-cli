@@ -47,4 +47,28 @@ describe("RuleValidator", () => {
     expect(violations[0].targetLayer).toBe("infrastructure");
     expect(violations[0].suggestion).toContain("依存性注入");
   });
+
+  it("循環依存を検出すると CyclicDependencyViolation を返す", () => {
+    const validator = new RuleValidator(constitution, "/project");
+    const dependencies: DependencyNode[] = [
+      {
+        sourceFilePath: "/project/src/application/a.ts",
+        importedModule: "./b",
+        lineNumber: 1,
+        codeSnippet: 'import { B } from "./b"',
+      },
+      {
+        sourceFilePath: "/project/src/application/b.ts",
+        importedModule: "./a",
+        lineNumber: 1,
+        codeSnippet: 'import { A } from "./a"',
+      },
+    ];
+    const violations = validator.checkViolations(dependencies);
+    const cycleViolation = violations.find((v) => v.type === "CyclicDependencyViolation");
+    expect(cycleViolation).toBeDefined();
+    expect(cycleViolation!.cycle).toBeDefined();
+    expect(cycleViolation!.cycle!.length).toBeGreaterThanOrEqual(2);
+    expect(cycleViolation!.suggestion).toContain("循環");
+  });
 });

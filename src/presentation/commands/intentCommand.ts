@@ -11,7 +11,8 @@ export function intentCommand(): Command {
     .description("自然言語要件から構造化要件（Requirements）の生成")
     .argument("[requirement]", "要件テキスト（自然言語）")
     .option("-f, --file <path>", "要件ファイルパス（長文向け）")
-    .action(async (requirement: string | undefined, options: { file?: string }) => {
+    .option("--format <format>", "出力形式: text | json（CI/AI 連携用）", "text")
+    .action(async (requirement: string | undefined, options: { file?: string; format?: string }) => {
       const cwd = process.cwd();
       const fileSystem = new LocalFileSystemAdapter();
 
@@ -58,12 +59,26 @@ export function intentCommand(): Command {
         const nfrCount = result.requirements.nonFunctionalRequirements.length;
         const oqCount = result.openQuestions.length;
 
-        console.error(`✅ .spec/requirements.json を生成しました（FR: ${frCount}, NFR: ${nfrCount}）`);
-        console.error(`✅ .spec/open_questions.md を生成しました（未解決: ${oqCount} 件）`);
-        console.error(`✅ .spec/assumptions.toml を生成しました`);
-
-        if (oqCount > 0) {
-          console.error(`\n⚠️ 未解決の質問が ${oqCount} 件あります。解決後に isotc plan を実行してください。`);
+        const format = options.format ?? "text";
+        if (format === "json") {
+          console.log(
+            JSON.stringify({
+              status: "ok",
+              requirementsPath: ".spec/requirements.json",
+              openQuestionsPath: ".spec/open_questions.md",
+              assumptionsPath: ".spec/assumptions.toml",
+              functionalRequirementsCount: frCount,
+              nonFunctionalRequirementsCount: nfrCount,
+              openQuestionsCount: oqCount,
+            })
+          );
+        } else {
+          console.error(`✅ .spec/requirements.json を生成しました（FR: ${frCount}, NFR: ${nfrCount}）`);
+          console.error(`✅ .spec/open_questions.md を生成しました（未解決: ${oqCount} 件）`);
+          console.error(`✅ .spec/assumptions.toml を生成しました`);
+          if (oqCount > 0) {
+            console.error(`\n⚠️ 未解決の質問が ${oqCount} 件あります。解決後に isotc plan を実行してください。`);
+          }
         }
       } catch (e) {
         console.error(`❌ エラー: ${e instanceof Error ? e.message : String(e)}`);
