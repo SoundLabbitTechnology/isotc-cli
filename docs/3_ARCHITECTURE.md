@@ -1,6 +1,6 @@
 # isotc-cli 内部アーキテクチャ設計書
 
-**参照**: [0_INDEX.md](./0_INDEX.md) | [1_PRD.md](./1_PRD.md) | [2_REQUIREMENTS.md](./2_REQUIREMENTS.md)
+**参照**: [0_INDEX.md](./0_INDEX.md) | [1_PRD.md](./1_PRD.md) | [2_REQUIREMENTS.md](./2_REQUIREMENTS.md) | [5_LLM_CONFIGURATION.md](./5_LLM_CONFIGURATION.md)
 
 ---
 
@@ -16,17 +16,18 @@ isotc-cli/
 │   ├── index.ts                 # CLIのセットアップ（Commander.js）
 │   │
 │   ├── presentation/            # ① CLI層（引数処理・出力制御）
-│   │   ├── commands/             # init, intent, plan, impl, handoff, verify, trace, emit, doctor
+│   │   ├── commands/             # init, intent, plan, impl, handoff, verify, trace, emit, doctor, config
 │   │   └── formatters/           # IOutputFormatter (JSON/Textの出し分け)
 │   │
 │   ├── application/             # ② ユースケース層
 │   │   ├── usecases/             # verifyArchitecture, extractIntent, generatePlan, buildTrace, traceDiff, traceExplain
 │   │   ├── prompts/              # LLM プロンプトテンプレート
-│   │   └── services/             # intentOutputRenderer 等
+│   │   └── services/             # intentOutputRenderer, configLoader 等
 │   │
 │   ├── domain/                  # ③ ドメイン層（コアビジネスロジック）
 │   │   ├── entities/
 │   │   │   ├── constitution.ts   # 憲法（アーキテクチャルール）
+│   │   │   ├── llmConfig.ts      # LLM 設定（provider, model）
 │   │   │   ├── dependencyNode.ts # 依存関係の抽象モデル
 │   │   │   ├── counterexample.ts # 反例（進化圧）
 │   │   │   ├── requirements.ts  # 構造化要件 IR
@@ -83,3 +84,4 @@ isotc-cli/
 | trace | traceCommand | BuildTraceUseCase, TraceDiffUseCase, TraceExplainUseCase | TraceGraph | LocalFileSystemAdapter, TypeScriptSymbolExtractor |
 | emit | emitCommand | - | Constitution | LocalFileSystemAdapter |
 | doctor | doctorCommand | - | - | LocalFileSystemAdapter |
+| config | configCommand | configLoader | LlmConfig | LocalFileSystemAdapter |

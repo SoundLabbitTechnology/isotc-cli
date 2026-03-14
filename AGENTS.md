@@ -22,6 +22,16 @@ isotc-cli は **Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail*
 
 CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な JSON のみ出力される。LLM 設定は `.spec/config.toml` でプロジェクト固有に保存可能（`isotc config set`）。
 
+## LLM プロバイダー
+
+intent / plan は OpenAI / Gemini / Claude に対応。`ISOTC_LLM_PROVIDER` で選択。詳細は [docs/5_LLM_CONFIGURATION.md](docs/5_LLM_CONFIGURATION.md)。
+
+| プロバイダー | 環境変数 |
+|-------------|----------|
+| openai | OPENAI_API_KEY |
+| gemini | GEMINI_API_KEY または GOOGLE_API_KEY |
+| claude | ANTHROPIC_API_KEY |
+
 ## 検証コマンド
 
 - アーキテクチャ検証: `isotc verify --format json`
@@ -54,3 +64,4 @@ constitution から Agent 環境向けの設定を生成する。
 
 - **Node.js**: 20 を推奨（engines は >=18）
 - **非対話モード**: `init --force`、`plan --approve`、`plan --force` で自動実行可能。
+- **LLM 設定**: [docs/5_LLM_CONFIGURATION.md](docs/5_LLM_CONFIGURATION.md) を参照。

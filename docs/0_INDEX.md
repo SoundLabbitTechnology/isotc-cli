@@ -1,6 +1,7 @@
 # isotc-cli ドキュメント一覧
 
-**最終更新:** 2026-03-14
+**最終更新:** 2026-03-14  
+**バージョン:** 0.3.0 対応（LLM マルチプロバイダー、config コマンド）
 
 ---
 
@@ -8,11 +9,12 @@
 
 ```
 docs/
-├── 0_INDEX.md              # 本ファイル（ナビゲーション）
-├── 1_PRD.md                # プロダクト要求仕様書
-├── 2_REQUIREMENTS.md       # コマンド契約・I/O仕様
-├── 3_ARCHITECTURE.md       # 内部アーキテクチャ設計
-├── 4_RESEARCH_BACKGROUND.md  # 学術的裏付けと参考文献
+├── 0_INDEX.md                 # 本ファイル（ナビゲーション）
+├── 1_PRD.md                   # プロダクト要求仕様書
+├── 2_REQUIREMENTS.md          # コマンド契約・I/O仕様
+├── 3_ARCHITECTURE.md          # 内部アーキテクチャ設計
+├── 4_RESEARCH_BACKGROUND.md   # 学術的裏付けと参考文献
+├── 5_LLM_CONFIGURATION.md     # LLM プロバイダー選択・設定ガイド
 └── TEST_SIMULATION_REPORT.md  # テストシミュレーション・棚卸し表（レビュー対応）
 ```
 
@@ -25,6 +27,7 @@ docs/
 | **貢献者** | [CONTRIBUTING.md](../CONTRIBUTING.md) → [3_ARCHITECTURE.md](3_ARCHITECTURE.md) |
 | **プロダクト担当** | [1_PRD.md](1_PRD.md) → [4_RESEARCH_BACKGROUND.md](4_RESEARCH_BACKGROUND.md) |
 | **品質・契約確認** | [TEST_SIMULATION_REPORT.md](TEST_SIMULATION_REPORT.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
+| **LLM 設定** | [5_LLM_CONFIGURATION.md](5_LLM_CONFIGURATION.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
 
 ## ドキュメント概要
 
@@ -52,6 +55,12 @@ docs/
 - 学術的・実証的裏付け
 - 強く支持される点 / 研究が薄い点
 - 参考文献一覧
+
+### [5_LLM_CONFIGURATION.md](5_LLM_CONFIGURATION.md) — LLM 設定ガイド
+
+- プロバイダー選択（OpenAI / Gemini / Claude）
+- 環境変数と .spec/config.toml
+- クイックスタート・トラブルシューティング
 
 ## 関連リソース
 

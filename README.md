@@ -37,7 +37,7 @@ isotc init
 ### 2. 仕様→計画→実装→検証のフロー
 
 ```bash
-# 自然言語要件を構造化（OPENAI_API_KEY が必要）
+# 自然言語要件を構造化（LLM API キーが必要。OpenAI / Gemini / Claude のいずれか）
 isotc intent "ユーザーはメールでログインできる。応答は200ms以内とする。"
 # → .spec/requirements.json, open_questions.md, assumptions.toml を生成
 
@@ -219,6 +219,8 @@ isotc emit agents --force
 | [docs/2_REQUIREMENTS.md](docs/2_REQUIREMENTS.md) | コマンド契約・I/O仕様・JSON Schema |
 | [docs/3_ARCHITECTURE.md](docs/3_ARCHITECTURE.md) | 内部アーキテクチャ設計 |
 | [docs/4_RESEARCH_BACKGROUND.md](docs/4_RESEARCH_BACKGROUND.md) | 学術的裏付けと参考文献 |
+| [docs/5_LLM_CONFIGURATION.md](docs/5_LLM_CONFIGURATION.md) | LLM プロバイダー選択・設定ガイド |
+| [docs/TEST_SIMULATION_REPORT.md](docs/TEST_SIMULATION_REPORT.md) | テストシミュレーション・棚卸し表 |
 | [AGENTS.md](AGENTS.md) | AI エージェント向けガイド（機械可読コマンド一覧） |
 
 ## 開発
