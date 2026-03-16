@@ -65,11 +65,9 @@ export function doctorCommand(): Command {
 
       if (!constitutionExists) {
         result.message = ".spec/constitution.toml がありません。isotc init を実行してください。";
-      } else if (!llmApiKeySet && requiresLlmForRequirements) {
+      } else if (!llmApiKeySet && mode === "llm" && requirementsExists) {
         result.message =
-          mode === "agent"
-            ? "LLM API キーが未設定ですが、mode=agent のため intent / plan は IDE エージェント向けのプロンプト生成モードで動作します。"
-            : "LLM API キーが未設定です。intent / plan を使用する場合は OPENAI_API_KEY, GEMINI_API_KEY, または ANTHROPIC_API_KEY のいずれかを設定し、ISOTC_LLM_PROVIDER でプロバイダーを指定してください。";
+          "LLM API キーが未設定です。intent / plan を使用する場合は OPENAI_API_KEY, GEMINI_API_KEY, または ANTHROPIC_API_KEY のいずれかを設定し、ISOTC_LLM_PROVIDER でプロバイダーを指定してください。";
       }
 
       const format = options.format ?? "json";

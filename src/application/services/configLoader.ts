@@ -67,11 +67,11 @@ export function getEffectiveProvider(_cwd: string, config: LlmConfig | null): Ll
  */
 export function getEffectiveMode(config: LlmConfig | null): IsotcMode {
   const envMode = process.env.ISOTC_MODE?.toLowerCase();
-  if (envMode === "llm" || envMode === "agent") {
-    return envMode;
+  if (envMode === "agent") {
+    return "agent";
   }
-  if (config?.mode === "llm" || config?.mode === "agent") {
-    return config.mode;
+  if (config?.mode === "agent") {
+    return "agent";
   }
   return "llm";
 }

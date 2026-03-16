@@ -26,4 +26,8 @@ export class LocalFileSystemAdapter implements IFileSystem {
   readFileSync(filePath: string): string {
     return fsSync.readFileSync(path.resolve(filePath), "utf-8");
   }
+
+  async ensureDir(dirPath: string): Promise<void> {
+    await fs.mkdir(path.resolve(dirPath), { recursive: true });
+  }
 }
