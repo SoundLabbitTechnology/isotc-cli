@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as toml from "@iarna/toml";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
-import type { LlmConfig, LlmProvider } from "../../domain/entities/llmConfig";
+import type { IsotcMode, LlmConfig, LlmProvider } from "../../domain/entities/llmConfig";
 
 const CONFIG_FILENAME = "config.toml";
 
@@ -27,10 +27,13 @@ export async function loadLlmConfig(cwd: string): Promise<LlmConfig | null> {
 
     const provider = typeof llm.provider === "string" ? llm.provider.toLowerCase() : undefined;
     const model = typeof llm.model === "string" ? llm.model.trim() : undefined;
+    const mode =
+      typeof llm.mode === "string" ? (llm.mode.toLowerCase() as IsotcMode | string) : undefined;
 
     return {
       provider: isValidProvider(provider) ? provider : undefined,
       model: model || undefined,
+      mode: isValidMode(mode) ? mode : undefined,
     };
   } catch {
     return null;
@@ -39,6 +42,10 @@ export async function loadLlmConfig(cwd: string): Promise<LlmConfig | null> {
 
 function isValidProvider(p: string | undefined): p is "openai" | "gemini" | "claude" {
   return p === "openai" || p === "gemini" || p === "claude";
+}
+
+function isValidMode(m: string | undefined): m is IsotcMode {
+  return m === "llm" || m === "agent";
 }
 
 /**
@@ -53,6 +60,20 @@ export function getEffectiveProvider(_cwd: string, config: LlmConfig | null): Ll
     return config.provider;
   }
   return "openai";
+}
+
+/**
+ * 有効なモードを取得。優先順位: 環境変数 > config ファイル > デフォルト(llm)
+ */
+export function getEffectiveMode(config: LlmConfig | null): IsotcMode {
+  const envMode = process.env.ISOTC_MODE?.toLowerCase();
+  if (envMode === "llm" || envMode === "agent") {
+    return envMode;
+  }
+  if (config?.mode === "llm" || config?.mode === "agent") {
+    return config.mode;
+  }
+  return "llm";
 }
 
 /**

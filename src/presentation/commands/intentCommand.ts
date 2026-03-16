@@ -6,6 +6,7 @@ import {
   loadLlmConfig,
   getEffectiveProvider,
   getEffectiveModel,
+  getEffectiveMode,
 } from "../../application/services/configLoader";
 import { ExtractIntentUseCase } from "../../application/usecases/extractIntentUseCase";
 import { renderOpenQuestionsMarkdown } from "../../application/services/intentOutputRenderer";
@@ -41,9 +42,93 @@ export function intentCommand(): Command {
       const requirementsPath = path.join(specDir, "requirements.json");
       const openQuestionsPath = path.join(specDir, "open_questions.md");
       const assumptionsPath = path.join(specDir, "assumptions.toml");
+      const agentDir = path.join(specDir, "agent");
+      const intentPromptPath = path.join(agentDir, "intent-prompt.md");
 
       try {
         const config = await loadLlmConfig(cwd);
+        const mode = getEffectiveMode(config);
+
+        if (mode === "agent") {
+          // Agent モード: requirements スケルトンと Intent 用プロンプト雛形のみ生成
+          const requirementsSkeleton = {
+            title: "Project Requirements (skeleton)",
+            description: "IDE エージェントが埋めるための requirements スケルトンです。",
+            functionalRequirements: [],
+            nonFunctionalRequirements: [],
+            openQuestionIds: [],
+          };
+
+          await fileSystem.writeFile(
+            requirementsPath,
+            JSON.stringify(requirementsSkeleton, null, 2)
+          );
+          await fileSystem.writeFile(
+            openQuestionsPath,
+            "# Open Questions (agent mode)\n\n- TODO: IDE エージェントがここに未解決の質問を整理します。\n"
+          );
+          await fileSystem.writeFile(
+            assumptionsPath,
+            '[[assumptions]]\nkey = "agent-mode"\nvalue = "requirements は IDE エージェントによってこのスキーマに従って埋められます。"\n'
+          );
+
+          // .spec/agent ディレクトリと intent 用プロンプト
+          await fileSystem.ensureDir(agentDir);
+          const intentPrompt = [
+            "# isotc intent (mode=agent) isolated prompt",
+            "",
+            "あなたはこのリポジトリの仕様コンパイラ isotc-cli と協調して作業する IDE エージェントです。",
+            "",
+            "## あなたの役割",
+            "",
+            "- `.spec/constitution.toml` に定義されたレイヤー構成と依存ルールを尊重します。",
+            "- プロジェクトの既存コードやドキュメントを読み、.spec/requirements.json を埋める役割を担います。",
+            "- open_questions.md / assumptions.toml も必要に応じて更新します。",
+            "",
+            "## ゴール",
+            "",
+            "- 自然言語で与えられた要件テキストを読み、`docs/requirements.schema.json` に準拠した `.spec/requirements.json` を完成させてください。",
+            "- 必要なら `.spec/open_questions.md` に未解決の疑問を箇条書きで追加してください。",
+            "- 前提・制約は `.spec/assumptions.toml` に追記してください。",
+            "",
+            "## 手順のヒント",
+            "",
+            "1. プロジェクトルートのドキュメントを確認します（README, docs/*.md など）。",
+            "2. `.spec/constitution.toml` を読み、このプロジェクトのアーキテクチャ境界を把握します。",
+            "3. `.spec/requirements.json` のスケルトンを開き、FR/NFR を埋めてください。",
+            "4. 不明点があれば `.spec/open_questions.md` に日本語で列挙してください。",
+            "5. 仮定した前提があれば `.spec/assumptions.toml` に TOML 形式で追記してください。",
+            "",
+            "## 重要",
+            "",
+            "- このプロンプトは isotc intent の Agent モード用であり、LLM API キーなしで利用されます。",
+            "- 最終的な JSON/TOML の形式は既存のスキーマに合わせてください。",
+            "",
+            "完了したら、人間または呼び出し元エージェントに「requirements.json を更新しました」と伝えてください。",
+            "",
+          ].join("\n");
+          await fileSystem.writeFile(intentPromptPath, intentPrompt);
+
+          const format = options.format ?? "text";
+          if (format === "json") {
+            console.log(
+              JSON.stringify({
+                status: "ok",
+                mode: "agent",
+                requirementsPath: ".spec/requirements.json",
+                openQuestionsPath: ".spec/open_questions.md",
+                assumptionsPath: ".spec/assumptions.toml",
+                intentPromptPath: ".spec/agent/intent-prompt.md",
+              })
+            );
+          } else {
+            console.error("✅ Agent モードで .spec/requirements.json のスケルトンを生成しました");
+            console.error("✅ .spec/open_questions.md / assumptions.toml のテンプレートを生成しました");
+            console.error("✅ .spec/agent/intent-prompt.md を生成しました（IDE エージェントに貼り付けてください）");
+          }
+          return;
+        }
+
         const provider = getEffectiveProvider(cwd, config);
         const model = getEffectiveModel(provider, config);
         const llmAdapter = createLlmAdapter({ provider, model });

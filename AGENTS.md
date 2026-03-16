@@ -22,9 +22,14 @@ isotc-cli は **Spec Compiler + Agent Runtime Policy + Human-Centered Guardrail*
 
 CI / AI 連携時は必ず `--format json` を指定する。stdout に純粋な JSON のみ出力される。LLM 設定は `.spec/config.toml` でプロジェクト固有に保存可能（`isotc config set`）。
 
-## LLM プロバイダー
+## LLM プロバイダーとモード
 
-intent / plan は OpenAI / Gemini / Claude に対応。`ISOTC_LLM_PROVIDER` で選択。詳細は [docs/5_LLM_CONFIGURATION.md](docs/5_LLM_CONFIGURATION.md)。
+intent / plan は OpenAI / Gemini / Claude に対応し、`ISOTC_LLM_PROVIDER` で選択する **LLM モード** と、LLM を一切呼ばず IDE エージェント前提で動作する **Agent モード** を持つ。
+
+- LLM モード: `ISOTC_MODE`（または .spec/config.toml の llm.mode）が `llm` のとき。intent / plan が LLM API を直接呼び出す。
+- Agent モード: `ISOTC_MODE`（または llm.mode）が `agent` のとき。intent / plan は `.spec/requirements.json` / `.spec/tasks.json` などのスケルトンと `.spec/agent/*.md`（IDE エージェント向けプロンプト）を生成する。
+
+LLM モード利用時のプロバイダーと環境変数:
 
 | プロバイダー | 環境変数 |
 |-------------|----------|

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-03-16
+
+### Added
+
+- **Agent モード（LLM 不要モード）**: LLM API キーなしで IDE エージェント経由のワークフローをサポート
+  - `.spec/config.toml` の `llm.mode = "llm" | "agent"` と環境変数 `ISOTC_MODE` を追加
+  - `mode=agent` のとき、`intent` / `plan` は LLM を呼ばず、`.spec/requirements.json` / `.spec/tasks.json` などのスケルトンと `.spec/agent/intent-prompt.md` / `plan-prompt.md` を生成
+  - `impl --isolated-prompt` / `handoff` を Agent モード前提のプロンプト文言に調整
+- **Agent / LLM 設定ドキュメント拡張**:
+  - README, AGENTS.md, docs/2_REQUIREMENTS.md, docs/5_LLM_CONFIGURATION.md に Agent モードの説明とフローを追記
+  - `config show --format json` に `mode` とその由来（source.mode）を追加
+  - `doctor --format json` に `mode` を追加し、Agent モード時の LLM キー未設定を正常扱いに変更
+
+## [0.4.0] - 2026-03-14
+
 ### Added
 
 - **LLM マルチプロバイダー対応**: intent / plan で OpenAI に加え Gemini・Claude を選択可能

@@ -6,9 +6,10 @@ import {
   loadLlmConfig,
   getEffectiveProvider,
   getEffectiveModel,
+  getEffectiveMode,
 } from "../../application/services/configLoader";
 import { hasLlmApiKey } from "../../infrastructure/adapters/llmAdapterFactory";
-import type { LlmProvider } from "../../domain/entities/llmConfig";
+import type { IsotcMode, LlmProvider } from "../../domain/entities/llmConfig";
 
 const CONFIG_PATH = ".spec/config.toml";
 const VALID_PROVIDERS: LlmProvider[] = ["openai", "gemini", "claude"];
@@ -31,8 +32,11 @@ export function configCommand(): Command {
   cmd
     .command("set")
     .description("設定を変更する")
-    .argument("<key>", "provider | model")
-    .argument("<value>", "値（provider: openai | gemini | claude、model: モデル名）")
+    .argument("<key>", "provider | model | mode")
+    .argument(
+      "<value>",
+      "値（provider: openai | gemini | claude、model: モデル名、mode: llm | agent）"
+    )
     .option("--format <format>", "出力形式: text | json", "text")
     .action(async (key: string, value: string, options: { format?: string }) => {
       const cwd = process.cwd();
@@ -70,8 +74,15 @@ export function configCommand(): Command {
         llm.provider = v;
       } else if (k === "model") {
         llm.model = value.trim();
+      } else if (k === "mode") {
+        const v = value.toLowerCase() as IsotcMode | string;
+        if (v !== "llm" && v !== "agent") {
+          console.error(`❌ 無効な mode: ${value}。llm | agent を指定してください。`);
+          process.exit(1);
+        }
+        llm.mode = v;
       } else {
-        console.error(`❌ 無効なキー: ${key}。provider | model を指定してください。`);
+        console.error(`❌ 無効なキー: ${key}。provider | model | mode を指定してください。`);
         process.exit(1);
       }
 
@@ -81,6 +92,7 @@ export function configCommand(): Command {
         llm: {
           ...(typeof llm.provider === "string" && { provider: llm.provider }),
           ...(typeof llm.model === "string" && { model: llm.model }),
+          ...(typeof llm.mode === "string" && { mode: llm.mode }),
         },
       };
       const tomlContent = toml.stringify(tomlObj as Parameters<typeof toml.stringify>[0]);
@@ -109,10 +121,12 @@ export function configCommand(): Command {
       const config = await loadLlmConfig(cwd);
       const provider = getEffectiveProvider(cwd, config);
       const model = getEffectiveModel(provider, config);
+      const mode = getEffectiveMode(config);
 
       const source = {
         provider: process.env.ISOTC_LLM_PROVIDER ? "env" : config?.provider ? "config" : "default",
         model: process.env.ISOTC_LLM_MODEL ? "env" : config?.model ? "config" : "default",
+        mode: process.env.ISOTC_MODE ? "env" : config?.mode ? "config" : "default",
       };
 
       const format = options.format ?? "text";
@@ -123,6 +137,7 @@ export function configCommand(): Command {
             model,
             source,
             apiKeySet: hasLlmApiKey(provider),
+            mode,
             configPath: config ? CONFIG_PATH : null,
           })
         );
@@ -130,6 +145,7 @@ export function configCommand(): Command {
         console.error("現在の LLM アダプター設定:");
         console.error(`  プロバイダー: ${provider} (${source.provider})`);
         console.error(`  モデル: ${model} (${source.model})`);
+        console.error(`  モード: ${mode} (${source.mode})`);
         console.error(`  API キー: ${hasLlmApiKey(provider) ? "設定済み" : "未設定"}`);
         if (config) {
           console.error(`  設定ファイル: ${CONFIG_PATH}`);

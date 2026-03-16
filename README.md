@@ -37,13 +37,24 @@ isotc init
 ### 2. 仕様→計画→実装→検証のフロー
 
 ```bash
-# 自然言語要件を構造化（LLM API キーが必要。OpenAI / Gemini / Claude のいずれか）
-isotc intent "ユーザーはメールでログインできる。応答は200ms以内とする。"
-# → .spec/requirements.json, open_questions.md, assumptions.toml を生成
+# モード設定（LLM 直呼び or Agent モード）
+# LLM モード（デフォルト）
+#   - intent / plan が LLM API（OpenAI / Gemini / Claude）を直接呼び出す
+# Agent モード
+#   - LLM を呼ばず、.spec/requirements.json や .spec/tasks.json のスケルトンと
+#     IDE エージェント向けプロンプト（.spec/agent/*.md）を生成
 
-# 設計とタスク分解（未解決の質問がある場合は失敗。--force で強制実行可）
-isotc plan
-# → .spec/tasks.json, design.md, adr/, model.puml, testplan.json, trace-seed.json を生成
+# 例: Agent モードでのフロー（LLM キー不要）
+isotc init
+isotc config set mode agent
+
+# 自然言語要件を構造化するためのスケルトンとプロンプトを生成
+isotc intent "ユーザーはメールでログインできる。応答は200ms以内とする。"
+# → .spec/requirements.json, open_questions.md, assumptions.toml, agent/intent-prompt.md を生成
+
+# 設計とタスク分解用のスケルトンとプロンプトを生成
+isotc plan --force
+# → .spec/tasks.json, design.md, adr/, model.puml, testplan.json, trace-seed.json, agent/plan-prompt.md を生成
 
 # トレーサビリティグラフの構築
 isotc trace build
@@ -123,9 +134,9 @@ composite action を使う場合:
 | `doctor` | 環境と .spec の健全性チェック |
 | `config` | LLM アダプター設定の表示・変更（.spec/config.toml） |
 
-### LLM アダプター設定（config）
+### LLM / モード設定（config）
 
-プロジェクトごとに LLM プロバイダーとモデルを `.spec/config.toml` に保存できます。`isotc init` 実行後に利用可能です。
+プロジェクトごとに LLM プロバイダーとモデル、モード（llm | agent）を `.spec/config.toml` に保存できます。`isotc init` 実行後に利用可能です。
 
 ```bash
 # プロバイダーを Gemini に設定
@@ -133,6 +144,9 @@ isotc config set provider gemini
 
 # モデルを指定
 isotc config set model gemini-2.5-flash
+
+# モードを Agent に設定（LLM API キー不要）
+isotc config set mode agent
 
 # 現在の設定を確認
 isotc config show
@@ -149,6 +163,7 @@ isotc config list-providers
 |------|------|
 | `ISOTC_LLM_PROVIDER` | LLM プロバイダー: `openai` \| `gemini` \| `claude`（デフォルト: openai） |
 | `ISOTC_LLM_MODEL` | 使用するモデル（プロバイダーごとのデフォルト: gpt-4o-mini / gemini-2.0-flash / claude-3-5-sonnet-20241022） |
+| `ISOTC_MODE` | isotc のモード: `llm`（LLM直呼び） \| `agent`（LLM キー不要。intent / plan はスケルトンと .spec/agent/*.md を生成） |
 | `OPENAI_API_KEY` | OpenAI 利用時に必須 |
 | `GEMINI_API_KEY` または `GOOGLE_API_KEY` | Gemini 利用時に必須 |
 | `ANTHROPIC_API_KEY` | Claude 利用時に必須 |

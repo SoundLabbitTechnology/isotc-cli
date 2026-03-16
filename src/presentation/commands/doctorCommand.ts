@@ -2,6 +2,7 @@ import { Command } from "commander";
 import * as path from "path";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
 import { hasLlmApiKey, hasAnyLlmApiKey } from "../../infrastructure/adapters/llmAdapterFactory";
+import { loadLlmConfig, getEffectiveMode } from "../../application/services/configLoader";
 
 interface DoctorResult {
   status: "ok" | "warning" | "error";
@@ -14,6 +15,7 @@ interface DoctorResult {
     geminiApiKeySet: boolean;
     claudeApiKeySet: boolean;
     llmProvider?: string;
+    mode?: string;
   };
   message?: string;
 }
@@ -37,8 +39,17 @@ export function doctorCommand(): Command {
       const llmApiKeySet = hasAnyLlmApiKey();
       const provider = process.env.ISOTC_LLM_PROVIDER ?? "openai";
 
+      const llmConfig = await loadLlmConfig(cwd);
+      const mode = getEffectiveMode(llmConfig);
+
+      const requiresLlmForRequirements = requirementsExists && mode === "llm";
+
       const result: DoctorResult = {
-        status: constitutionExists ? (llmApiKeySet || !requirementsExists ? "ok" : "warning") : "error",
+        status: constitutionExists
+          ? llmApiKeySet || !requiresLlmForRequirements
+            ? "ok"
+            : "warning"
+          : "error",
         nodeVersion: process.version,
         checks: {
           constitution: constitutionExists,
@@ -48,14 +59,17 @@ export function doctorCommand(): Command {
           geminiApiKeySet,
           claudeApiKeySet,
           llmProvider: provider,
+          mode,
         },
       };
 
       if (!constitutionExists) {
         result.message = ".spec/constitution.toml がありません。isotc init を実行してください。";
-      } else if (!llmApiKeySet && requirementsExists) {
+      } else if (!llmApiKeySet && requiresLlmForRequirements) {
         result.message =
-          "LLM API キーが未設定です。intent / plan を使用する場合は OPENAI_API_KEY, GEMINI_API_KEY, または ANTHROPIC_API_KEY のいずれかを設定し、ISOTC_LLM_PROVIDER でプロバイダーを指定してください。";
+          mode === "agent"
+            ? "LLM API キーが未設定ですが、mode=agent のため intent / plan は IDE エージェント向けのプロンプト生成モードで動作します。"
+            : "LLM API キーが未設定です。intent / plan を使用する場合は OPENAI_API_KEY, GEMINI_API_KEY, または ANTHROPIC_API_KEY のいずれかを設定し、ISOTC_LLM_PROVIDER でプロバイダーを指定してください。";
       }
 
       const format = options.format ?? "json";
@@ -70,6 +84,9 @@ export function doctorCommand(): Command {
         console.error(`${result.checks.claudeApiKeySet ? "✅" : "○"} ANTHROPIC_API_KEY: ${result.checks.claudeApiKeySet ? "設定済み" : "未設定"}`);
         if (result.checks.llmProvider) {
           console.error(`   LLM プロバイダー: ${result.checks.llmProvider} (ISOTC_LLM_PROVIDER)`);
+        }
+        if (result.checks.mode) {
+          console.error(`   モード: ${result.checks.mode} (ISOTC_MODE)`);
         }
         console.error(`Node: ${result.nodeVersion}`);
         if (result.message) console.error(result.message);

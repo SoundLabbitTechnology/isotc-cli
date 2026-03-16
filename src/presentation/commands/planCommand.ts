@@ -7,6 +7,7 @@ import {
   loadLlmConfig,
   getEffectiveProvider,
   getEffectiveModel,
+  getEffectiveMode,
 } from "../../application/services/configLoader";
 import { Constitution } from "../../domain/entities/constitution";
 import { RequirementsDocument } from "../../domain/entities/requirements";
@@ -63,6 +64,112 @@ export function planCommand(): Command {
 
       try {
         const config = await loadLlmConfig(cwd);
+        const mode = getEffectiveMode(config);
+
+        const tasksPath = path.join(specDir, "tasks.json");
+        const designPath = path.join(specDir, "design.md");
+        const adrDir = path.join(specDir, "adr");
+        const modelPath = path.join(specDir, "model.puml");
+        const testplanPath = path.join(specDir, "testplan.json");
+        const traceSeedPath = path.join(specDir, "trace-seed.json");
+        const agentDir = path.join(specDir, "agent");
+        const planPromptPath = path.join(agentDir, "plan-prompt.md");
+
+        if (mode === "agent") {
+          // Agent モード: スケルトン成果物と plan 用プロンプト雛形のみ生成
+          await fileSystem.writeFile(
+            tasksPath,
+            JSON.stringify({ tasks: [] }, null, 2)
+          );
+          await fileSystem.writeFile(
+            designPath,
+            "# 技術設計 (agent mode skeleton)\n\nTODO: IDE エージェントがここに設計を書き込みます。\n"
+          );
+
+          const adrSkeletonPath = path.join(adrDir, "0001-agent-mode.md");
+          await fileSystem.writeFile(
+            adrSkeletonPath,
+            [
+              "# ADR-0001: Agent モードでの計画生成",
+              "",
+              "この ADR は、isotc-cli の plan コマンドを mode=agent で実行した際の設計・タスク分解を IDE エージェント側で行う方針を記録するためのスケルトンです。",
+              "",
+              "TODO: IDE エージェント／人間がこのファイルを更新し、実際のアーキテクチャ判断を書き込んでください。",
+              "",
+            ].join("\n")
+          );
+
+          await fileSystem.writeFile(
+            modelPath,
+            "@startuml\n' Agent モード用のモデル図スケルトンです。IDE エージェントが編集してください。\n@enduml\n"
+          );
+          await fileSystem.writeFile(
+            testplanPath,
+            JSON.stringify({ testplan: [] }, null, 2)
+          );
+          await fileSystem.writeFile(
+            traceSeedPath,
+            JSON.stringify({ requirementTaskEdges: [] }, null, 2)
+          );
+
+          await fileSystem.ensureDir(agentDir);
+          const planPrompt = [
+            "# isotc plan (mode=agent) isolated prompt",
+            "",
+            "あなたは isotc-cli と協調して作業する IDE エージェントです。",
+            "",
+            "## あなたの役割",
+            "",
+            "- `.spec/requirements.json` を読み、技術設計とタスク分解を行います。",
+            "- `.spec/tasks.json`, `.spec/design.md`, `.spec/adr/*`, `.spec/model.puml`, `.spec/testplan.json`, `.spec/trace-seed.json` を更新します。",
+            "",
+            "## ゴール",
+            "",
+            "- requirements に基づき、タスクDAG（tasks.json）と対応する設計・テスト計画を作成してください。",
+            "- 各タスクは後続の `isotc impl` / `isotc verify` が扱いやすい粒度に分解してください。",
+            "",
+            "## 手順のヒント",
+            "",
+            "1. `.spec/requirements.json` を読み、FR/NFR を理解します。",
+            "2. `.spec/constitution.toml` のレイヤーと依存ルールを確認します。",
+            "3. tasks.json にタスクの一覧と依存関係を JSON Schema に沿って記述します。",
+            "4. design.md にシステム構成・データフロー・レイヤー間の責務分担を書きます。",
+            "5. 必要であれば `.spec/adr/*` にアーキテクチャ判断を追記します。",
+            "6. testplan.json に要件→テストケースの対応を記述します。",
+            "7. trace-seed.json に requirements と tasks の対応付けを記述します。",
+            "",
+            "## 重要",
+            "",
+            "- mode=agent では LLM API キーは不要であり、あなたがこれらのファイルを直接編集する前提です。",
+            "- 既存の JSON/TOML/PlantUML の形式を崩さないようにしてください。",
+            "",
+            "完了したら、人間または呼び出し元エージェントに「plan の成果物を更新しました」と伝えてください。",
+            "",
+          ].join("\n");
+          await fileSystem.writeFile(planPromptPath, planPrompt);
+
+          const format = options.format ?? "text";
+          if (format === "json") {
+            console.log(
+              JSON.stringify({
+                status: "ok",
+                mode: "agent",
+                tasksPath: ".spec/tasks.json",
+                designPath: ".spec/design.md",
+                adrDir: ".spec/adr",
+                modelPath: ".spec/model.puml",
+                testplanPath: ".spec/testplan.json",
+                traceSeedPath: ".spec/trace-seed.json",
+                planPromptPath: ".spec/agent/plan-prompt.md",
+              })
+            );
+          } else {
+            console.error("✅ Agent モードで plan 用のスケルトン成果物を生成しました");
+            console.error("✅ .spec/agent/plan-prompt.md を生成しました（IDE エージェントに貼り付けてください）");
+          }
+          return;
+        }
+
         const provider = getEffectiveProvider(cwd, config);
         const model = getEffectiveModel(provider, config);
         const llmAdapter = createLlmAdapter({ provider, model });
@@ -70,15 +177,14 @@ export function planCommand(): Command {
         const result = await useCase.execute(requirements, constitution);
 
         await fileSystem.writeFile(
-          path.join(specDir, "tasks.json"),
+          tasksPath,
           JSON.stringify({ tasks: result.tasks }, null, 2)
         );
         await fileSystem.writeFile(
-          path.join(specDir, "design.md"),
+          designPath,
           result.designMd || "# 技術設計\n\n（生成中）\n"
         );
 
-        const adrDir = path.join(specDir, "adr");
         const adrSlug = result.adrTitle
           .replace(/\s+/g, "-")
           .replace(/[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf-]/g, "");
@@ -86,15 +192,15 @@ export function planCommand(): Command {
         await fileSystem.writeFile(adrPath, result.adrContent || "# ADR-0001\n\n（生成中）\n");
 
         await fileSystem.writeFile(
-          path.join(specDir, "model.puml"),
+          modelPath,
           result.modelPuml || "@startuml\n' クラス図\n@enduml\n"
         );
         await fileSystem.writeFile(
-          path.join(specDir, "testplan.json"),
+          testplanPath,
           JSON.stringify({ testplan: result.testplan }, null, 2)
         );
         await fileSystem.writeFile(
-          path.join(specDir, "trace-seed.json"),
+          traceSeedPath,
           JSON.stringify(
             { requirementTaskEdges: result.requirementTaskEdges },
             null,

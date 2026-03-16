@@ -1,6 +1,6 @@
 {
   "name": "isotc-cli",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Intent-to-Spec Optimal Transport Compiler CLI - 仕様・アーキテクチャ境界の検証とトレーサビリティ支援",
   "main": "dist/index.js",
   "bin": {

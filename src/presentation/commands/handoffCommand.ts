@@ -3,6 +3,7 @@ import * as path from "path";
 import * as toml from "@iarna/toml";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
 import { Constitution } from "../../domain/entities/constitution";
+import { loadLlmConfig, getEffectiveMode } from "../../application/services/configLoader";
 
 type HandoffRole = "implementer" | "reviewer" | "tester" | "architect";
 
@@ -42,15 +43,21 @@ function buildConstitutionSummary(constitution: Constitution): string {
 function buildHandoffForRole(
   role: HandoffRole,
   task: TaskEntry | null,
-  constitutionSummary: string
+  constitutionSummary: string,
+  mode: "llm" | "agent"
 ): string {
   const taskDesc = task?.description ?? task?.title ?? "(タスク未指定)";
   const taskTitle = task?.title ? `## タスク: ${task.title}\n\n` : "";
   const taskId = task?.id ? `**タスク ID**: ${task.id}\n\n` : "";
 
+  const implHeader =
+    mode === "agent"
+      ? "以下のタスクを実装してください。LLM API キーを使わず、IDE エージェントとしてこのプロンプトの内容のみに従ってください。"
+      : "以下のタスクを実装してください。コンテキストを切ってこのプロンプトのみに従ってください。";
+
   switch (role) {
     case "implementer":
-      return `以下のタスクを実装してください。コンテキストを切ってこのプロンプトのみに従ってください。
+      return `${implHeader}
 
 ${constitutionSummary}
 
@@ -135,6 +142,9 @@ export function handoffCommand(): Command {
       }
       const constitutionSummary = buildConstitutionSummary(constitution);
 
+      const llmConfig = await loadLlmConfig(cwd);
+      const mode = getEffectiveMode(llmConfig);
+
       let task: TaskEntry | null = null;
       if (options.taskId && (await fileSystem.exists(tasksPath))) {
         try {
@@ -147,7 +157,7 @@ export function handoffCommand(): Command {
         }
       }
 
-      const content = buildHandoffForRole(role, task, constitutionSummary);
+      const content = buildHandoffForRole(role, task, constitutionSummary, mode);
 
       const format = options.format ?? "text";
       if (format === "json") {

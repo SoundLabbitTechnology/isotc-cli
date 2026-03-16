@@ -109,6 +109,13 @@ ${steeringBlock ? `\n### Agent Steering\n${steeringBlock}` : ""}
 ## 検証
 
 実装後は \`npx isotc-cli@latest verify --format json\` で検証すること。
+
+## モード
+
+- LLM 直呼びモード: intent / plan が OpenAI / Gemini / Claude を直接呼び出します。
+- Agent モード: intent / plan は LLM を呼ばず、.spec/requirements.json や .spec/tasks.json などのスケルトンと、IDE エージェント向けのプロンプト（.spec/agent/*.md）を生成します。
+
+Agent モードでは API キーが不要であり、IDE 側のエージェント（Cursor など）が .spec/ 配下のファイルを読み書きする前提で動作します。
 `;
 }
 

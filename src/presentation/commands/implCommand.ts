@@ -3,6 +3,7 @@ import * as path from "path";
 import * as toml from "@iarna/toml";
 import { LocalFileSystemAdapter } from "../../infrastructure/adapters/localFileSystemAdapter";
 import { Constitution } from "../../domain/entities/constitution";
+import { loadLlmConfig, getEffectiveMode } from "../../application/services/configLoader";
 
 interface TaskEntry {
   id: string;
@@ -62,7 +63,9 @@ export function implCommand(): Command {
           }
         }
 
-        const prompt = buildIsolatedPrompt(task, constitutionSummary);
+        const config = await loadLlmConfig(cwd);
+        const mode = getEffectiveMode(config);
+        const prompt = buildIsolatedPrompt(task, constitutionSummary, mode);
         console.log(prompt);
         process.exit(0);
       }
@@ -92,11 +95,20 @@ function buildConstitutionSummary(constitution: Constitution): string {
   return `【憲法（アーキテクチャ規約）】\nレイヤー:\n${layers}\n\n依存ルール:\n${rules ?? ""}${steeringBlock}`;
 }
 
-function buildIsolatedPrompt(task: TaskEntry, constitutionSummary: string): string {
+function buildIsolatedPrompt(
+  task: TaskEntry,
+  constitutionSummary: string,
+  mode: "llm" | "agent"
+): string {
   const taskDesc = task.description ?? task.title ?? "(説明なし)";
   const taskTitle = task.title ? `## タスク: ${task.title}\n\n` : "";
 
-  return `以下のタスクのみを実装してください。前のタスクの会話履歴は参照せず、このプロンプトの内容のみに従ってください。
+  const header =
+    mode === "agent"
+      ? "以下のタスクのみを実装してください。LLM API キーを使わず、IDE エージェントとしてこのプロンプトの内容のみに従ってください。"
+      : "以下のタスクのみを実装してください。前のタスクの会話履歴は参照せず、このプロンプトの内容のみに従ってください。";
+
+  return `${header}
 
 ${constitutionSummary}
 

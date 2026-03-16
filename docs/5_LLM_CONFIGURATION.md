@@ -26,9 +26,9 @@
 
 設定の優先順位は次のとおり。
 
-1. **環境変数** — `ISOTC_LLM_PROVIDER`、`ISOTC_LLM_MODEL`
+1. **環境変数** — `ISOTC_LLM_PROVIDER`、`ISOTC_LLM_MODEL`、`ISOTC_MODE`
 2. **.spec/config.toml** — プロジェクト固有の設定（`isotc config set` で管理）
-3. **デフォルト** — openai、プロバイダーごとのデフォルトモデル
+3. **デフォルト** — openai、プロバイダーごとのデフォルトモデル、mode=llm
 
 ### 3.2 環境変数での設定
 
@@ -51,7 +51,7 @@ export ISOTC_LLM_MODEL=claude-3-5-sonnet-20241022  # オプション
 
 ### 3.3 プロジェクト設定（.spec/config.toml）
 
-`isotc init` 実行後、`isotc config` でプロジェクトごとの設定を保存できる。API キーは含めず、プロバイダーとモデルのみ。
+`isotc init` 実行後、`isotc config` でプロジェクトごとの設定を保存できる。API キーは含めず、プロバイダー・モデル・モードのみ。
 
 ```bash
 # プロバイダーを Gemini に設定
@@ -59,6 +59,9 @@ isotc config set provider gemini
 
 # モデルを指定
 isotc config set model gemini-2.5-flash
+
+# モードを Agent に設定（LLM API キー不要）
+isotc config set mode agent
 
 # 現在の有効な設定を確認
 isotc config show
@@ -71,15 +74,16 @@ isotc config list-providers
 
 ```toml
 [llm]
-provider = "gemini"   # openai | gemini | claude
+provider = "gemini"          # openai | gemini | claude
 model = "gemini-2.5-flash"   # 任意。未指定時はプロバイダーごとのデフォルト
+mode = "agent"               # llm | agent
 ```
 
 ---
 
-## 4. クイックスタート（プロバイダー別）
+## 4. クイックスタート（モード別 / プロバイダー別）
 
-### OpenAI
+### LLM モード + OpenAI
 
 ```bash
 export OPENAI_API_KEY=sk-...
@@ -87,7 +91,7 @@ isotc intent "ユーザーはメールでログインできる"
 isotc plan --force
 ```
 
-### Gemini
+### LLM モード + Gemini
 
 ```bash
 export ISOTC_LLM_PROVIDER=gemini
@@ -96,13 +100,34 @@ isotc config set provider gemini  # プロジェクトに保存する場合
 isotc intent "ユーザーはメールでログインできる"
 ```
 
-### Claude
+### LLM モード + Claude
 
 ```bash
 export ISOTC_LLM_PROVIDER=claude
 export ANTHROPIC_API_KEY=sk-ant-...
 isotc config set provider claude
 isotc intent "ユーザーはメールでログインできる"
+```
+
+### Agent モード（LLM キーなし）
+
+```bash
+# モードのみ agent に設定（プロバイダー/モデルは任意）
+isotc init
+isotc config set mode agent
+
+# LLM API キー不要で intent / plan を実行
+isotc intent "ユーザーはメールでログインできる"
+isotc plan --force
+
+# 生成される主なファイル
+# - .spec/requirements.json
+# - .spec/tasks.json
+# - .spec/agent/intent-prompt.md
+# - .spec/agent/plan-prompt.md
+#
+# IDE 側のエージェント（Cursor など）から .spec/agent/*.md を開き、
+# 指示に従って .spec/ 配下のファイルを編集させてください。
 ```
 
 ---
