@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/requirements.schema.json",
+  "$id": "https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli/schemas/requirements.schema.json",
   "title": "Requirements Document",
   "description": "構造化要件 IR（isotc intent の出力）",
   "type": "object",

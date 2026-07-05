@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/trace.schema.json",
+  "$id": "https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli/schemas/trace.schema.json",
   "title": "Trace Graph",
   "description": "requirement -> adr -> task -> file -> symbol -> test -> violation の連結グラフ",
   "type": "object",

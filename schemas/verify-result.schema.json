@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/verify-result.schema.json",
+  "$id": "https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli/schemas/verify-result.schema.json",
   "title": "Verify Result",
   "description": "isotc verify --format json の出力スキーマ（2_REQUIREMENTS.md 3.2 準拠）",
   "type": "object",

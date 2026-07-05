@@ -19,7 +19,7 @@ npm exec --yes isotc-cli@latest -- verify
 ### 開発者向け（ソースビルド）
 
 ```bash
-git clone https://github.com/SoundLabbitTechnology/isotc-cli.git
+git clone https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli.git
 cd isotc-cli
 npm install && npm run build
 npm link  # 任意
@@ -110,7 +110,7 @@ composite action を使う場合:
 
 ```yaml
 - uses: actions/checkout@v4
-- uses: SoundLabbitTechnology/isotc-cli/.github/actions/setup-isotc@main
+- uses: SoundLabbitTechnology/SLT-Isotc-Cli/.github/actions/setup-isotc@main
 - run: npx isotc-cli@latest init --force
 - run: npx isotc-cli@latest verify --format json
 ```

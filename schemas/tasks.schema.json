@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/SoundLabbitTechnology/isotc-cli/schemas/tasks.schema.json",
+  "$id": "https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli/schemas/tasks.schema.json",
   "title": "Tasks Document",
   "description": ".spec/tasks.json（isotc plan の出力）",
   "type": "object",

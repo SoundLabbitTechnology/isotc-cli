@@ -10,7 +10,7 @@ Sound Labbit Technology Inc. のラボ活動として開発している isotc-cl
 
 ### バグ報告・機能要望
 
-- [GitHub Issues](https://github.com/SoundLabbitTechnology/isotc-cli/issues) で報告してください
+- [GitHub Issues](https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli/issues) で報告してください
 - 既存の Issue に類似がないか確認してから作成してください
 - バグ報告には再現手順、環境情報を含めてください
 
@@ -24,7 +24,7 @@ Sound Labbit Technology Inc. のラボ活動として開発している isotc-cl
 ### 開発環境
 
 ```bash
-git clone https://github.com/SoundLabbitTechnology/isotc-cli.git
+git clone https://github.com/SoundLabbitTechnology/SLT-Isotc-Cli.git
 cd isotc-cli
 npm install
 npm run build

@@ -9,6 +9,9 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-      - run: npm ci && npm run build
+      - run: |
+          npm install -g npm@11
+          npm ci --ignore-scripts
+          npm run build
       - run: npx . init --force
       - run: npx . verify --format json
