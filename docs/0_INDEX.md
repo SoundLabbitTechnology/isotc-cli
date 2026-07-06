@@ -15,6 +15,7 @@ docs/
 ├── 3_ARCHITECTURE.md          # 内部アーキテクチャ設計
 ├── 4_RESEARCH_BACKGROUND.md   # 学術的裏付けと参考文献
 ├── 5_LLM_CONFIGURATION.md     # LLM プロバイダー選択・設定ガイド
+├── 6_THEORETICAL_LINEAGE.md   # 意図研究40年史における理論的系譜（GORE/BDI）
 └── TEST_SIMULATION_REPORT.md  # テストシミュレーション・棚卸し表（レビュー対応）
 ```
 
@@ -28,6 +29,7 @@ docs/
 | **プロダクト担当** | [1_PRD.md](1_PRD.md) → [4_RESEARCH_BACKGROUND.md](4_RESEARCH_BACKGROUND.md) |
 | **品質・契約確認** | [TEST_SIMULATION_REPORT.md](TEST_SIMULATION_REPORT.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
 | **LLM 設定** | [5_LLM_CONFIGURATION.md](5_LLM_CONFIGURATION.md) → [2_REQUIREMENTS.md](2_REQUIREMENTS.md) |
+| **理論的背景を深く知りたい** | [6_THEORETICAL_LINEAGE.md](6_THEORETICAL_LINEAGE.md) → [4_RESEARCH_BACKGROUND.md](4_RESEARCH_BACKGROUND.md) |
 
 ## ドキュメント概要
 
@@ -61,6 +63,13 @@ docs/
 - プロバイダー選択（OpenAI / Gemini / Claude）
 - 環境変数と .spec/config.toml
 - クイックスタート・トラブルシューティング
+
+### [6_THEORETICAL_LINEAGE.md](6_THEORETICAL_LINEAGE.md) — 理論的系譜
+
+- ゴール指向要求工学（GORE/i\*/KAOS/Tropos）との対応
+- BDI エージェントモデルと Volatility の対応
+- 「意図」の多義性に関する注記
+- 意図マイニングとの接続（Future Work）
 
 ## 関連リソース
 
